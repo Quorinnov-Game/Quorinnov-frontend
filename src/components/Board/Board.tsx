@@ -5,6 +5,7 @@ import { Player } from '../../@types/player';
 
 const BOARD_SIZE = 9;
 
+
 const Board: React.FC = () => {
     const initialPlayer: Player = {
         id: "1",
@@ -15,16 +16,48 @@ const Board: React.FC = () => {
     const [player, setPlayer] = useState<Player>(initialPlayer);
     const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
-    useEffect(() => {
-        setPlayer(player);
-    }, [player]);
-
     const handleSelectPlayer = (player: Player) => {
-        setSelectedPlayer(player);
+        if(selectedPlayer && selectedPlayer.id === player.id) {
+            setSelectedPlayer(null);
+        }
+        else {
+            setSelectedPlayer(player);
+        }
+    };
+
+    const getValidMoves = () => {
+        if (!selectedPlayer) return [];
+        const { x, y } = selectedPlayer.position;
+        const moves = [
+            { x: x - 1, y },
+            { x: x + 1, y },
+            { x, y: y - 1 },
+            { x, y: y + 1 }
+        ];
+        return moves.filter(pos =>
+            pos.x >= 0 && pos.x < BOARD_SIZE &&
+            pos.y >= 0 && pos.y < BOARD_SIZE
+        );
     };
 
     const movePlayer = (x: number, y: number) => {
+        if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) {
+            return;
+        }
         if (selectedPlayer) {
+            const playerPosition = selectedPlayer.position;
+            const dx = Math.abs(playerPosition.x - x);
+            const dy = Math.abs(playerPosition.y - y);
+            const isAjacent = (dx+dy === 1);
+            if (!isAjacent) {
+                return;
+            }
+
+            if (playerPosition.x === x && playerPosition.y === y) {
+                setSelectedPlayer(null);
+                return;
+            }
+
             setPlayer((prev) => ({
                 ...prev,
                 position: { x: x, y: y },
@@ -32,6 +65,8 @@ const Board: React.FC = () => {
             setSelectedPlayer(null);
         }
     };
+
+    
 
     return (
         <Box display="grid"
@@ -57,6 +92,7 @@ const Board: React.FC = () => {
                         selectedPlayer={selectedPlayer}
                         onSelectPlayer={handleSelectPlayer}
                         onMovePlayer={movePlayer}
+                        isValidMove={getValidMoves().some(pos => pos.x === x && pos.y === y)}
                     />
                 ))
             ))}

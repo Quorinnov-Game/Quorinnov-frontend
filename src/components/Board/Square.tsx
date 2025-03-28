@@ -9,24 +9,25 @@ type SquareProps = {
     selectedPlayer: Player | null,
     onSelectPlayer: (player: Player) => void,
     onMovePlayer: (x: number, y: number) => void;
+    isValidMove?: boolean;
 };
-const Square: React.FC<SquareProps> = ({x, y, player, selectedPlayer, onSelectPlayer, onMovePlayer} : SquareProps) => {
+const Square: React.FC<SquareProps> = ({x, y, player, selectedPlayer, onSelectPlayer, onMovePlayer, isValidMove} : SquareProps) => {
     const isPlayerHere = player.position.x === x && player.position.y === y;
     return (
         <Box
-            key={`${x}-${y}`}
-            onClick={() => isPlayerHere ? onSelectPlayer(player) : selectedPlayer && onMovePlayer(x, y)}
+            onClick={() => isPlayerHere ? onSelectPlayer(player) : (isValidMove && onMovePlayer(x, y))}
             sx={{
                 width: "100%",
                 height: "100%",
                 aspectRatio: "1/1",
                 border: "1px solid black",
                 borderRadius: "4px",
-                backgroundColor: "white",
-                cursor: onclick ? "pointer" : "default",
-                "&:hover": onclick && {
-                    backgroundColor: "#e0e0e0",
-                },
+                backgroundColor: isPlayerHere ? player.color :
+                                  isValidMove ? "#90caf955" : "white",
+                cursor: isPlayerHere || isValidMove ? "pointer" : "default",
+                "&:hover": isPlayerHere || isValidMove ? {
+                    backgroundColor: isValidMove ? "#90caf9" : "#f8bbd0"
+                } : {}
             }}
         >
             {isPlayerHere && (

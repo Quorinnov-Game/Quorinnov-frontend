@@ -4,20 +4,62 @@ import Square from './Square';
 import { Player } from '../../@types/player';
 
 const BOARD_SIZE = 9;
+export const GAP_CELLULE = 10;
+export const GRID_SIZE = 50;
 
+type BoardProps = {
+    playerColor: "red" | "blue",
+    isGameStarted: boolean,
+}
 
-const Board: React.FC = () => {
-    const initialPlayer: Player = {
-        id: "1",
-        color: "red",
-        position: { x: (BOARD_SIZE - 1), y: Math.floor(BOARD_SIZE / 2) },
-    };
+const Board: React.FC<BoardProps> = ({ playerColor, isGameStarted }) => {
+    const initialPlayers = {
+        P1: {
+            id: 1,
+            color: playerColor,
+            position: { x: BOARD_SIZE - 1, y: Math.floor(BOARD_SIZE / 2) },
+            wallsRemaining: 10,
+            isWinner: false,
+            isPlayer: true,
+        },
+        P2: {
+            id: 2,
+            color: playerColor === "red" ? "blue" : "red",
+            position: { x: 0, y: Math.floor(BOARD_SIZE / 2) },
+            wallsRemaining: 10,
+            isWinner: false,
+            isPlayer: false,
+        }
+    }
 
-    const [player, setPlayer] = useState<Player>(initialPlayer);
+    const [players, setPlayers] = useState<{ P1: Player, P2: Player }>(initialPlayers);
     const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
+    useEffect(() => {
+        if (!playerColor) return;
+    
+        setPlayers({
+            P1: {
+                id: 1,
+                color: playerColor,
+                position: { x: BOARD_SIZE - 1, y: Math.floor(BOARD_SIZE / 2) },
+                wallsRemaining: 10,
+                isWinner: false,
+                isPlayer: true,
+            },
+            P2: {
+                id: 2,
+                color: playerColor === "red" ? "blue" : "red",
+                position: { x: 0, y: Math.floor(BOARD_SIZE / 2) },
+                wallsRemaining: 10,
+                isWinner: false,
+                isPlayer: false,
+            }
+        });
+    }, [playerColor]);
+
     const handleSelectPlayer = (player: Player) => {
-        if(selectedPlayer && selectedPlayer.id === player.id) {
+        if (selectedPlayer && selectedPlayer.id === player.id) {
             setSelectedPlayer(null);
         }
         else {
@@ -41,14 +83,13 @@ const Board: React.FC = () => {
     };
 
     const movePlayer = (x: number, y: number) => {
-        if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) {
-            return;
-        }
+        if (!selectedPlayer || !selectedPlayer.isPlayer) return;
+        if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) return;
         if (selectedPlayer) {
             const playerPosition = selectedPlayer.position;
             const dx = Math.abs(playerPosition.x - x);
             const dy = Math.abs(playerPosition.y - y);
-            const isAjacent = (dx+dy === 1);
+            const isAjacent = (dx + dy === 1);
             if (!isAjacent) {
                 return;
             }
@@ -58,22 +99,26 @@ const Board: React.FC = () => {
                 return;
             }
 
-            setPlayer((prev) => ({
+            setPlayers(prev => ({
                 ...prev,
-                position: { x: x, y: y },
+                [selectedPlayer.id === 1 ? "P1" : "P2"]: {
+                    ...selectedPlayer,
+                    position: { x, y }
+                }
             }));
             setSelectedPlayer(null);
         }
     };
 
-    
+
 
     return (
         <Box display="grid"
-            gridTemplateColumns={`repeat(${BOARD_SIZE}, 50px)`}
-            gridTemplateRows={`repeat(${BOARD_SIZE}, 50px)`}
-            gap="4px"
+            gridTemplateColumns={`repeat(${BOARD_SIZE}, ${GRID_SIZE}px)`}
+            gridTemplateRows={`repeat(${BOARD_SIZE}, ${GRID_SIZE}px)`}
+            gap={`${GAP_CELLULE}px`}
             sx={{
+                position: "relative",
                 width: "max-content",
                 margin: "auto",
                 padding: "16px",
@@ -88,11 +133,12 @@ const Board: React.FC = () => {
                     <Square
                         x={x}
                         y={y}
-                        player={player}
+                        players={players}
                         selectedPlayer={selectedPlayer}
                         onSelectPlayer={handleSelectPlayer}
                         onMovePlayer={movePlayer}
                         isValidMove={getValidMoves().some(pos => pos.x === x && pos.y === y)}
+                        isGameStarted={isGameStarted}
                     />
                 ))
             ))}

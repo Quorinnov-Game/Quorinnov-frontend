@@ -5,33 +5,35 @@ import PlayerShow from "../Player/PlayerShow";
 type SquareProps = {
     x: number,
     y: number,
-    player: Player,
+    players: {P1: Player, P2: Player},
     selectedPlayer: Player | null,
     onSelectPlayer: (player: Player) => void,
-    onMovePlayer: (x: number, y: number) => void;
-    isValidMove?: boolean;
+    onMovePlayer: (x: number, y: number) => void,
+    isValidMove?: boolean,
+    isGameStarted: boolean,
 };
-const Square: React.FC<SquareProps> = ({x, y, player, selectedPlayer, onSelectPlayer, onMovePlayer, isValidMove} : SquareProps) => {
-    const isPlayerHere = player.position.x === x && player.position.y === y;
+const Square: React.FC<SquareProps> = ({x, y, players, selectedPlayer, onSelectPlayer, onMovePlayer, isValidMove, isGameStarted} : SquareProps) => {
+    const playerHere = Object.values(players).find(player => player.position?.x === x && player?.position.y === y);
+    const isYourPlayer = playerHere?.isPlayer === true;
     return (
         <Box
-            onClick={() => isPlayerHere ? onSelectPlayer(player) : (isValidMove && onMovePlayer(x, y))}
+            onClick={() => isGameStarted && isYourPlayer ? onSelectPlayer(playerHere) : (selectedPlayer && isValidMove && onMovePlayer(x, y))}
             sx={{
                 width: "100%",
                 height: "100%",
                 aspectRatio: "1/1",
                 border: "1px solid black",
                 borderRadius: "4px",
-                backgroundColor: isPlayerHere ? player.color :
+                backgroundColor: isYourPlayer ? playerHere.color :
                                   isValidMove ? "#90caf955" : "white",
-                cursor: isPlayerHere || isValidMove ? "pointer" : "default",
-                "&:hover": isPlayerHere || isValidMove ? {
+                cursor: isYourPlayer || isValidMove ? "pointer" : "default",
+                "&:hover": isYourPlayer || isValidMove ? {
                     backgroundColor: isValidMove ? "#90caf9" : "#f8bbd0"
                 } : {}
             }}
         >
-            {isPlayerHere && (
-                <PlayerShow color={player.color} id={player.id}/>
+            {playerHere && (
+                <PlayerShow color={playerHere.color} id={playerHere.id} />
             )}
         </Box>
     );

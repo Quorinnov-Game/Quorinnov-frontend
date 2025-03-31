@@ -4,7 +4,7 @@ import Square from './Square';
 import { Player } from '../../@types/player';
 import InfoPanel from '../Controls/InfoPanel';
 
-const BOARD_SIZE = 9;
+export const BOARD_SIZE = 9;
 export const GAP_CELLULE = 10;
 export const GRID_SIZE = 50;
 const NAME_PLAYER = "Player 1";

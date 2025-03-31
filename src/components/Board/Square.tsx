@@ -1,6 +1,7 @@
 import { Alert, Box, Dialog } from "@mui/material"
 import { Player } from "../../@types/player";
 import PlayerShow from "../Player/PlayerShow";
+import { BOARD_SIZE } from "./Board";
 
 type SquareProps = {
     x: number,
@@ -16,16 +17,17 @@ type SquareProps = {
 const Square: React.FC<SquareProps> = ({ x, y, players, selectedPlayer, onSelectPlayer, onMovePlayer, isValidMove, isGameStarted, turn }: SquareProps) => {
     const playerHere = Object.values(players).find(player => player.position?.x === x && player?.position.y === y);
     const isYourPlayer = playerHere?.isPlayer === true;
-    const isYourTurn = playerHere?.isPlayer && turn === "P1"
+    const isYourTurn = playerHere?.isPlayer && turn === "P1";
+    const isTopOrBotRow = x === 0 || x === BOARD_SIZE - 1;
 
     const onAction = () => {
         if (!isGameStarted) {
             alert("You need to click 'New Game' to start playing.");
             return;
         }
-        else{
+        else {
             isYourPlayer && isYourTurn ?
-            onSelectPlayer(playerHere) : (selectedPlayer && isValidMove && onMovePlayer(x, y))
+                onSelectPlayer(playerHere) : (selectedPlayer && isValidMove && onMovePlayer(x, y))
         }
     }
     return (
@@ -37,11 +39,20 @@ const Square: React.FC<SquareProps> = ({ x, y, players, selectedPlayer, onSelect
                 aspectRatio: "1/1",
                 border: "1px solid black",
                 borderRadius: "4px",
-                backgroundColor: isYourPlayer ? playerHere.color :
-                    isValidMove ? "#90caf955" : "white",
+                backgroundColor: isYourPlayer
+                    ? playerHere.color
+                    : isValidMove
+                        ? "#FFF59D"
+                        : isTopOrBotRow
+                            ? "#CCCCCC"
+                            : "white",
                 cursor: isYourPlayer || isValidMove ? "pointer" : "default",
+                boxShadow: isValidMove && !isYourPlayer
+                    ? "0 0 8px #FFF59D"
+                    : "none",
+                transition: "all 0.2s",
                 "&:hover": isYourPlayer || isValidMove ? {
-                    backgroundColor: isValidMove ? "#90caf9" : "#f8bbd0"
+                    backgroundColor: isValidMove ? "#FFEB3B" : "#f8bbd0"
                 } : {}
             }}
         >

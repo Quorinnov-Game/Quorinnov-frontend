@@ -48,7 +48,7 @@ const Game: React.FC = () => {
 
     return (
         <div>
-            <Box display="flex" flexDirection="column" alignItems="center">
+            <Box display="flex" flexDirection="column">
                 <ControlPanel
                     onNewGame={() => setOpenNewGame(true)}
                 >

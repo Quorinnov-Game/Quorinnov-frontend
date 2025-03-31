@@ -3,12 +3,6 @@ export type Position = {
     y: number;
 }
 
-export type Move = {
-    playerId: string;
-    from: Position;
-    to: Position;
-};
-
 export type Wall = {
     playerId: string;
     position: Position;

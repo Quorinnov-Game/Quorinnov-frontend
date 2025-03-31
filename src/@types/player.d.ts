@@ -1,8 +1,9 @@
 export type Player = {
-    id: string;
+    id: number;
     name?: string;
     color?: string;
     position?: Position;
-    walls?: number;
+    wallsRemaining?: number;
     isWinner?: boolean;
+    isPlayer?: boolean;
 }

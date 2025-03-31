@@ -22,7 +22,7 @@ const Square: React.FC<SquareProps> = ({ x, y, players, selectedPlayer, onSelect
 
     const onAction = () => {
         if (!isGameStarted) {
-            alert("You need to click 'New Game' to start playing.");
+            alert("Vous devez cliquer sur « Nouvelle partie » pour commencer à jouer.");
             return;
         }
         else {

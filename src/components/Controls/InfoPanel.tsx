@@ -21,26 +21,26 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ players, turn }) => {
                 height: "100%"
             }}
         >
-            <Typography variant="h6" fontWeight="bold" color="textPrimary" mb={1}>Players</Typography>
+            <Typography variant="h6" fontWeight="bold" color="textPrimary" mb={1}>Joueurs</Typography>
             <Divider sx={{ width: "100%", mb: 1 }} />
 
             {/* Player */}
             <Box mb={1}>
-                <Typography variant="body1" color="textSecondary">You ({players.P1.color})</Typography>
-                <Typography variant="body2" color="textSecondary">Walls: {players.P1.wallsRemaining}</Typography>
+                <Typography variant="body1" color="textSecondary">Vous (<span style={{color: "red"}}>Rouge</span>)</Typography>
+                <Typography variant="body2" color="textSecondary">Murs: {players.P1.wallsRemaining}</Typography>
             </Box>
 
             {/* AI */}
             <Box mb={1}>
-                <Typography variant="body1" color="textSecondary">AI ({players.P2.color})</Typography>
-                <Typography variant="body2" color="textSecondary">Walls: {players.P2.wallsRemaining}</Typography>
+                <Typography variant="body1" color="textSecondary">AI (<span style={{color: "blue"}}>Bleu</span>)</Typography>
+                <Typography variant="body2" color="textSecondary">Murs: {players.P2.wallsRemaining}</Typography>
             </Box>
 
             <Divider sx={{ width: "100%", mb: 1 }} />
 
             {/* Turn */}
             <Typography variant="subtitle1" color="primary" fontWeight="bold">
-                {turn === "P1" ? "Your Turn" : "AI's Turn"}
+                {turn === "P1" ? "Votre tour" : "Tour d'IA"}
             </Typography>
         </Box>
     );

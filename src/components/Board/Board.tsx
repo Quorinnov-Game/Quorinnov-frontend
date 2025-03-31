@@ -3,13 +3,14 @@ import React, { useEffect, useState } from 'react';
 import Square from './Square';
 import { Player } from '../../@types/player';
 import InfoPanel from '../Controls/InfoPanel';
+import { TYPES_COLOR } from '../../pages/Game';
 
 export const BOARD_SIZE = 9;
 export const GAP_CELLULE = 10;
 export const GRID_SIZE = 50;
 const NAME_PLAYER = "Player 1";
 type BoardProps = {
-    playerColor: "red" | "blue",
+    playerColor: TYPES_COLOR,
     isGameStarted: boolean,
 }
 
@@ -26,7 +27,7 @@ const Board: React.FC<BoardProps> = ({ playerColor, isGameStarted }) => {
         },
         P2: {
             id: 2,
-            color: playerColor === "red" ? "blue" : "red",
+            color: playerColor === "red" ? "bleu" : "rouge",
             name: "AI",
             position: { x: 0, y: Math.floor(BOARD_SIZE / 2) },
             wallsRemaining: 10,

@@ -10,8 +10,8 @@ const Home: React.FC = () => {
                 Quoridor Game
             </Typography>
 
-            <Typography variant="h6" color="textSecondary">
-                Play the game of Quoridor against the computer.
+            <Typography variant="h6">
+                Jouez au jeu Quoridor contre l'ordinateur intelligent
             </Typography>
 
             <Box mt={3}>
@@ -23,7 +23,7 @@ const Home: React.FC = () => {
                     sx={{ mb: 2, width: "80%" }}
                     onClick={() => navigate("/game")}
                 >
-                    Play
+                    Jouer
                 </Button>
             </Box>
 
@@ -36,7 +36,7 @@ const Home: React.FC = () => {
                     sx={{ mb: 2, width: "80%" }}
                     onClick={() => navigate("/rules")}
                 >
-                    Rules
+                    Règles
                 </Button>
             </Box>
 
@@ -49,7 +49,20 @@ const Home: React.FC = () => {
                     sx={{ mb: 2, width: "80%" }}
                     onClick={() => navigate("/about")}
                 >
-                    About
+                    À propos
+                </Button>
+            </Box>
+
+            <Box mt={3}>
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    size="large"
+                    href="/tuto"
+                    sx={{ mb: 2, width: "80%" }}
+                    onClick={() => navigate("/tuto")}
+                >
+                    Tutoriel
                 </Button>
             </Box>
         </Container>

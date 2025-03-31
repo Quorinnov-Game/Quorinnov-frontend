@@ -4,18 +4,22 @@ import { useNavigate } from 'react-router';
 import { Box, Button, Dialog, DialogActions, DialogTitle, Typography } from '@mui/material';
 import ControlPanel from '../components/Controls/ControlPanel';
 
+
+
+export type TYPES_COLOR = "red" | "blue";
+
 const Game: React.FC = () => {
     const navigate = useNavigate();
     const listsDifficulty = [
-        { id: 1, name: "Easy" },
-        { id: 2, name: "Medium" },
-        { id: 3, name: "Hard" },
-        { id: 4, name: "Very Hard" },
+        { id: 1, name: "Débutant" },
+        { id: 2, name: "Intermédiaire" },
+        { id: 3, name: "Avancé" },
+        { id: 4, name: "Master" },
     ]
     const [openNewGame, setOpenNewGame] = useState(false);
     const [openDifficulty, setOpenDifficulty] = useState(false);
     const [openChoosePlayer, setOpenChoosePlayer] = useState(false);
-    const [playerColor, setPlayerColor] = useState<"red" | "blue">("red");
+    const [playerColor, setPlayerColor] = useState<TYPES_COLOR>("red");
     const [isGameStarted, setIsGameStarted] = useState(false);
 
 
@@ -40,7 +44,7 @@ const Game: React.FC = () => {
         setOpenChoosePlayer(true);
     }
 
-    const handleChooseColor = (color: "red" | "blue") => {
+    const handleChooseColor = (color: TYPES_COLOR) => {
         setPlayerColor(color)
         setOpenChoosePlayer(false)
         navigate("/game");
@@ -67,16 +71,16 @@ const Game: React.FC = () => {
                         }
                     }}
                 >
-                    <DialogTitle id="alert-dialog-title-start-game">Do you want to start a new game or continue game</DialogTitle>
-                    <DialogActions sx={{ textAlign: "center" }}>
+                    <DialogTitle id="alert-dialog-title-start-game">Voulez-vous démarrer une nouvelle partie ou continuer la partie ?</DialogTitle>
+                    <DialogActions>
                         <Button onClick={handleNewGame} color="primary">
-                            <Typography variant="h6" fontWeight="bold">New</Typography>
+                            <Typography variant="h6" fontWeight="bold">Nouvelle</Typography>
                         </Button>
                         <Button onClick={handleResumeGame} color="inherit">
                             <Typography variant="h6" fontWeight="bold">Continue</Typography>
                         </Button>
                         <Button onClick={handleCancel} color="error">
-                            <Typography variant="h6" fontWeight="bold">Cancel</Typography>
+                            <Typography variant="h6" fontWeight="bold">Retour</Typography>
                         </Button>
                     </DialogActions>
                 </Dialog>
@@ -94,8 +98,8 @@ const Game: React.FC = () => {
                         }
                     }}
                 >
-                    <DialogTitle id="alert-dialog-title-difficulty-game" sx={{ justifyContent: "space-between" }}>Choose level AI difficulty</DialogTitle>
-                    <DialogActions sx={{ textAlign: "center" }}>
+                    <DialogTitle id="alert-dialog-title-difficulty-game" sx={{ justifyContent: "space-between" }}>Choisissez le niveau de difficulté de l'IA que vous voulez.</DialogTitle>
+                    <DialogActions>
                         {listsDifficulty.map((difficulty) => (
                             <Button key={difficulty.id} onClick={handleSelectDifficulty} color="success">
                                 <Typography variant="h6" fontWeight="bold">{difficulty.name}</Typography>
@@ -117,19 +121,19 @@ const Game: React.FC = () => {
                         }
                     }}
                 >
-                    <DialogTitle id="alert-dialog-title-difficulty-game" >Choose color your player</DialogTitle>
-                    <DialogActions sx={{ textAlign: "center" }}>
+                    <DialogTitle id="alert-dialog-title-difficulty-game" >Choisissez la couleur de votre personnage préféré</DialogTitle>
+                    <DialogActions>
                         <Button
                             onClick={() => handleChooseColor("red")}
                             color="error"
                         >
-                            <Typography variant="h6" fontWeight="bold">Red</Typography>
+                            <Typography variant="h6" fontWeight="bold">Rouge</Typography>
                         </Button>
                         <Button
                             onClick={() => handleChooseColor("blue")}
                             color="primary"
                         >
-                            <Typography variant="h6" fontWeight="bold">Blue</Typography>
+                            <Typography variant="h6" fontWeight="bold">Bleu</Typography>
                         </Button>
                     </DialogActions>
                 </Dialog>

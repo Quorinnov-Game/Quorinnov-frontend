@@ -9,22 +9,20 @@ const Rules: React.FC = () => {
             mx="auto"
             p={4}
         >
-            <Typography variant="h3" fontWeight="bold" gutterBottom>
+            <Typography variant="h3" fontWeight="bold" mb={2} gutterBottom>
                 Les règles de Quoridor
             </Typography>
-
-            <Divider sx={{ mb: 2 }} />
 
             {/* Section 1 */}
                 <Typography variant="h6" fontWeight="medium" mb={2}>1. Objective</Typography>
                 <img src={winImg} alt="Moving Pawn" width="70%" style={{ borderRadius: 8, marginBottom: 16 }} />
 
             {/* Section 2 */}
-                <Typography variant="h6" fontWeight="medium" mb={2}>2. Moving Your Pawn</Typography>
+                <Typography variant="h6" fontWeight="medium" mb={2}>2. Déplacer votre pion</Typography>
                 <img src={emplacementImg} alt="Moving Pawn" width="70%" style={{ borderRadius: 8, marginBottom: 16 }} />
 
             {/* Section 3 */}
-                <Typography variant="h6" fontWeight="medium" mb={2}>3. Placing Walls</Typography>
+                <Typography variant="h6" fontWeight="medium" mb={2}>3. Placer des murs</Typography>
                 <img src={blockImg} alt="Placing Wall" width="70%" style={{ borderRadius: 8, marginBottom: 16 }} />
 
         </Box>

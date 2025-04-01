@@ -2,6 +2,8 @@ import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import Home from './pages/Home'
 import Game from './pages/Game'
+import Rules from './pages/Rules'
+import Tuto from './pages/Tuto'
 
 const router = createBrowserRouter([
   {
@@ -14,7 +16,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/rules',
-    element: <div>Rules</div>
+    element: <div><Rules /></div>
   },
   {
     path: '/about',
@@ -22,7 +24,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/tuto',
-    element: <div>Tuto</div>
+    element: <div><Tuto /></div>
   },
 ])
 

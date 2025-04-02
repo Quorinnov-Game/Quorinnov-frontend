@@ -78,51 +78,60 @@ const Board: React.FC<BoardProps> = ({ playerColor, isGameStarted }) => {
     const getValidMoves = () => {
         if (!selectedPlayer) return [];
         const { x, y } = selectedPlayer.position;
-        const moves = [
-            { x: x - 1, y },
-            { x: x + 1, y },
-            { x, y: y - 1 },
-            { x, y: y + 1 }
+        const directions = [
+            { dx: -1, dy: 0 },
+            { dx: 1, dy: 0 },
+            { dx: 0, dy: -1 },
+            { dx: 0, dy: 1 },
         ];
-        return moves.filter(pos =>
-            pos.x >= 0 && pos.x < BOARD_SIZE &&
-            pos.y >= 0 && pos.y < BOARD_SIZE
-        );
+
+        const validMoves: { x: number, y: number }[] = [];
+        for (const { dx, dy } of directions) {
+            const nx = x + dx;
+            const ny = y + dy;
+
+            // Si ce n'est pas sur le tableau, sautez-le
+            if (nx < 0 || nx >= BOARD_SIZE || ny < 0 || ny >= BOARD_SIZE) continue;
+
+            // Vérifier si la cellule a un adversaire
+            if (players.P2.position.x === nx && players.P2.position.y === ny) {
+                const jumpX = nx + dx;
+                const jumpY = ny + dy;
+
+                // Si après P2 il y a une case vide sur le plateau, sautez par-dessus.
+                if (jumpX >= 0 && jumpX < BOARD_SIZE && jumpY >= 0 && jumpY < BOARD_SIZE) {
+                    validMoves.push({ x: jumpX, y: jumpY });
+                }
+            } else {
+                // Si c'est une cellule vide normale
+                validMoves.push({ x: nx, y: ny });
+            }
+        }
+        return validMoves;
     };
 
     const movePlayer = (x: number, y: number) => {
         if (!selectedPlayer || !selectedPlayer.isPlayer || turn !== "P1") return;
         if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) return;
-        if (selectedPlayer) {
-            const playerPosition = selectedPlayer.position;
-            const dx = Math.abs(playerPosition.x - x);
-            const dy = Math.abs(playerPosition.y - y);
-            const isAjacent = (dx + dy === 1);
-            if (!isAjacent) {
-                return;
-            }
 
-            if (playerPosition.x === x && playerPosition.y === y) {
-                setSelectedPlayer(null);
-                return;
-            }
+        const isLegalMove = getValidMoves().some(pos => pos.x === x && pos.y === y);
+        if (!isLegalMove) return;
 
-            setPlayers(prev => ({
-                ...prev,
-                [selectedPlayer.id === 1 ? "P1" : "P2"]: {
-                    ...selectedPlayer,
-                    position: { x, y }
-                }
-            }));
-            setSelectedPlayer(null);
-            setTurn(prev => prev === "P1" ? "P2" : "P1")
-        }
+        setPlayers(prev => ({
+            ...prev,
+            [selectedPlayer.id === 1 ? "P1" : "P2"]: {
+                ...selectedPlayer,
+                position: { x, y }
+            }
+        }));
+        setSelectedPlayer(null);
+        setTurn(prev => prev === "P1" ? "P2" : "P1")
     };
 
 
 
     return (
-        <Box 
+        <Box
             display="flex"
             flexDirection={isMobile ? "column" : "row"}
             alignItems={isMobile ? "center" : "normal"}
@@ -130,7 +139,7 @@ const Board: React.FC<BoardProps> = ({ playerColor, isGameStarted }) => {
             gap={4}
 
         >
-            <Box 
+            <Box
                 display="grid"
                 gridTemplateColumns={`repeat(${BOARD_SIZE}, ${isMobile ? 30 : GRID_SIZE}px)`}
                 gridTemplateRows={`repeat(${BOARD_SIZE}, ${isMobile ? 30 : GRID_SIZE}px)`}

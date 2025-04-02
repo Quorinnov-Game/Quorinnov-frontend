@@ -11,24 +11,17 @@ type SquareProps = {
     onSelectPlayer: (player: Player) => void,
     onMovePlayer: (x: number, y: number) => void,
     isValidMove?: boolean,
-    isGameStarted: boolean,
     turn: "P1" | "P2"
 };
-const Square: React.FC<SquareProps> = ({ x, y, players, selectedPlayer, onSelectPlayer, onMovePlayer, isValidMove, isGameStarted, turn }: SquareProps) => {
+const Square: React.FC<SquareProps> = ({ x, y, players, selectedPlayer, onSelectPlayer, onMovePlayer, isValidMove, turn }: SquareProps) => {
     const playerHere = Object.values(players).find(player => player.position?.x === x && player?.position.y === y);
     const isYourPlayer = playerHere?.isPlayer === true;
     const isYourTurn = playerHere?.isPlayer && turn === "P1";
     const isTopOrBotRow = x === 0 || x === BOARD_SIZE - 1;
 
     const onAction = () => {
-        if (!isGameStarted) {
-            alert("Vous devez cliquer sur « Nouvelle partie » pour commencer à jouer.");
-            return;
-        }
-        else {
             isYourPlayer && isYourTurn ?
                 onSelectPlayer(playerHere) : (selectedPlayer && isValidMove && onMovePlayer(x, y))
-        }
     }
     return (
         <Box

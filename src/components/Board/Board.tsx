@@ -11,10 +11,9 @@ export const GRID_SIZE = 50;
 const NAME_PLAYER = "Player 1";
 type BoardProps = {
     playerColor: TYPES_COLOR,
-    isGameStarted: boolean,
 }
 
-const Board: React.FC<BoardProps> = ({ playerColor, isGameStarted }) => {
+const Board: React.FC<BoardProps> = ({ playerColor }) => {
     const isMobile = useMediaQuery('(max-width:600px)')
     const initialPlayers = {
         P1: {
@@ -165,7 +164,6 @@ const Board: React.FC<BoardProps> = ({ playerColor, isGameStarted }) => {
                             onSelectPlayer={handleSelectPlayer}
                             onMovePlayer={movePlayer}
                             isValidMove={getValidMoves().some(pos => pos.x === x && pos.y === y)}
-                            isGameStarted={isGameStarted}
                             turn={turn}
                         />
                     ))

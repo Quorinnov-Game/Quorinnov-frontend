@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, useMediaQuery } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import Square from './Square';
 import { Player } from '../../@types/player';
@@ -15,6 +15,7 @@ type BoardProps = {
 }
 
 const Board: React.FC<BoardProps> = ({ playerColor, isGameStarted }) => {
+    const isMobile = useMediaQuery('(max-width:600px)')
     const initialPlayers = {
         P1: {
             id: 1,
@@ -121,12 +122,19 @@ const Board: React.FC<BoardProps> = ({ playerColor, isGameStarted }) => {
 
 
     return (
-        <Box display="flex" gap={4}>
+        <Box 
+            display="flex"
+            flexDirection={isMobile ? "column" : "row"}
+            alignItems={isMobile ? "center" : "normal"}
+            justifyContent={isMobile ? "center" : "normal"}
+            gap={4}
+
+        >
             <Box 
                 display="grid"
-                gridTemplateColumns={`repeat(${BOARD_SIZE}, ${GRID_SIZE}px)`}
-                gridTemplateRows={`repeat(${BOARD_SIZE}, ${GRID_SIZE}px)`}
-                gap={`${GAP_CELLULE}px`}
+                gridTemplateColumns={`repeat(${BOARD_SIZE}, ${isMobile ? 30 : GRID_SIZE}px)`}
+                gridTemplateRows={`repeat(${BOARD_SIZE}, ${isMobile ? 30 : GRID_SIZE}px)`}
+                gap={`${isMobile ? 6 : GAP_CELLULE}px`}
                 sx={{
                     position: "relative",
                     width: "max-content",
@@ -135,7 +143,7 @@ const Board: React.FC<BoardProps> = ({ playerColor, isGameStarted }) => {
                     aspectRatio: "1/1",
                     backgroundColor: "#f0f0f0",
                     border: "1px solid black",
-                    borderRadius: "4px",
+                    borderRadius: "8px",
                 }}
             >
                 {Array.from({ length: BOARD_SIZE }, (_, x) => (

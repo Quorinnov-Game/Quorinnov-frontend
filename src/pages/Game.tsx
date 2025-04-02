@@ -5,7 +5,7 @@ import { Box, Button, Dialog, DialogActions, DialogTitle, Typography } from '@mu
 import ControlPanel from '../components/Controls/ControlPanel';
 
 
-
+export type MODE_PLAY = "AI" | "User";
 export type TYPES_COLOR = "red" | "blue";
 
 const Game: React.FC = () => {
@@ -21,11 +21,13 @@ const Game: React.FC = () => {
     const [openChoosePlayer, setOpenChoosePlayer] = useState(false);
     const [playerColor, setPlayerColor] = useState<TYPES_COLOR>("red");
     const [isGameStarted, setIsGameStarted] = useState(false);
+    const [openModeGame, setOpenModeGame] = useState(false);
+    const [isVsAI, setIsVsAI] = useState(true)
 
 
     const handleNewGame = () => {
         setOpenNewGame(false);
-        setOpenDifficulty(true);
+        setOpenModeGame(true);
         setIsGameStarted(true);
     }
 
@@ -34,9 +36,15 @@ const Game: React.FC = () => {
         navigate("/game");
     }
 
-    const handleCancel = () => {
+    const handleRetour = () => {
         setOpenNewGame(false);
         navigate("/");
+    }
+
+    const handleModeGame = (vsAI: boolean) => {
+        setIsVsAI(vsAI);
+        setOpenModeGame(false);
+        vsAI ? setOpenDifficulty(true) : setOpenChoosePlayer(true) 
     }
 
     const handleSelectDifficulty = () => {
@@ -79,10 +87,35 @@ const Game: React.FC = () => {
                         <Button onClick={handleResumeGame} color="inherit">
                             <Typography variant="h6" fontWeight="bold">Continue</Typography>
                         </Button>
-                        <Button onClick={handleCancel} color="error">
+                        <Button onClick={handleRetour} color="error">
                             <Typography variant="h6" fontWeight="bold">Retour</Typography>
                         </Button>
                     </DialogActions>
+                </Dialog>
+
+                <Dialog 
+                    open={openModeGame}
+                    onClose={(_, reason) => reason !== 'backdropClick' && reason !== 'escapeKeyDown' && setOpenModeGame(false)}
+                    sx={{
+                        '& .MuiDialog-paper': {
+                            borderRadius: '12px',
+                            padding: 2,
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+                            minWidth: '320px',
+                            backgroundColor: '#fff',
+                        }
+                    }}
+                >
+                    <DialogTitle id="alert-dialog-title-mode-game">Quel mode voulez-vous jouer ?</DialogTitle>
+                    <DialogActions>
+                        <Button onClick={() => handleModeGame(!isVsAI)} color="primary">
+                            <Typography variant="h6" fontWeight="bold">1vs1</Typography>
+                        </Button>
+                        <Button onClick={() => handleModeGame(isVsAI)} color="inherit">
+                            <Typography variant="h6" fontWeight="bold">AI</Typography>
+                        </Button>
+                    </DialogActions>
+
                 </Dialog>
 
                 <Dialog

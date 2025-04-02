@@ -1,69 +1,37 @@
 import React from "react";
 import { useNavigate } from "react-router";
 import { Box, Button, Container, Typography } from "@mui/material";
+import Logo from "../assets/img/Logo.jpeg"
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
     return (
-        <Container fixed sx={{ textAlign: "center", mt: 10 }}>
+        <Container
+            maxWidth="sm"
+            sx={{ textAlign: "center", py: 5 }}
+        >
+            <Box
+                component="img"
+                src={Logo}
+                alt="Quoridor Logo"
+                sx={{
+                    width: { xs: "120px", sm: "180px", md: "200px" }, // responsive
+                    height: "auto",
+                    mb: 4,
+                    borderRadius: 2,
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                }}
+            />
+
             <Typography variant="h3" fontWeight="bold" gutterBottom>
                 Quoridor Game
             </Typography>
 
-            <Typography variant="h6">
-                Jouez au jeu Quoridor contre l'ordinateur intelligent
-            </Typography>
-
-            <Box mt={3}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    href="/game"
-                    sx={{ mb: 2, width: "80%" }}
-                    onClick={() => navigate("/game")}
-                >
-                    Jouer
-                </Button>
-            </Box>
-
-            <Box mt={3}>
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    size="large"
-                    href="/rules"
-                    sx={{ mb: 2, width: "80%" }}
-                    onClick={() => navigate("/rules")}
-                >
-                    Règles
-                </Button>
-            </Box>
-
-            <Box mt={3}>
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    size="large"
-                    href="/about"
-                    sx={{ mb: 2, width: "80%" }}
-                    onClick={() => navigate("/about")}
-                >
-                    À propos
-                </Button>
-            </Box>
-
-            <Box mt={3}>
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    size="large"
-                    href="/tuto"
-                    sx={{ mb: 2, width: "80%" }}
-                    onClick={() => navigate("/tuto")}
-                >
-                    Tutoriel
-                </Button>
+            <Box display="flex" flexDirection="column" gap={2} alignItems="center" mt={4}>
+                <Button fullWidth variant="contained" color="primary" size="medium" onClick={() => navigate("/game")}>Jouer</Button>
+                <Button fullWidth variant="outlined" color="primary" size="medium" onClick={() => navigate("/rules")}>Règles</Button>
+                <Button fullWidth variant="outlined" color="primary" size="medium" onClick={() => navigate("/about")}>À propos</Button>
+                <Button fullWidth variant="outlined" color="primary" size="medium" onClick={() => navigate("/tuto")}>Tutoriel</Button>
             </Box>
         </Container>
     );

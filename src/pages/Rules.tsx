@@ -35,7 +35,7 @@ const Rules: React.FC = () => {
                         <Box width={{ xs: '100%', sm: '45%' }} textAlign="center">
                             <img src={jumpImg} alt="Mur" width="100%" style={{ borderRadius: 8, marginBottom: 8 }} />
                             <Typography variant="h6" fontWeight="medium" gutterBottom>Déplacer des pions</Typography>
-                            <Typography variant="body2">Il est possible de sauter par-dessus l'adversaire s'il bloque le chemin.</Typography>
+                            <Typography variant="body2">Si la case adjacente est bloquée par une barrière ou le bord du plateau, on peut sauter en diagonale à gauche ou à droite.</Typography>
                         </Box>
 
                         {/* Section 4 */}

@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import Board from '../components/Board/Board';
 import { useNavigate } from 'react-router';
-import { Box, Button, Dialog, DialogActions, DialogTitle, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import ControlPanel from '../components/Controls/ControlPanel';
+import ChooseModeGame from '../components/Notify/ChooseModeGame';
+import ChooseDifficultyGameForAI from '../components/Notify/ChooseDifficultyGameForAI';
+import ChoosePlayerColorGame from '../components/Notify/ChoosePlayerColorGame';
+import ChooseRestartNewGame from '../components/Notify/ChooseNewGame';
+import BlurBackground from '../config/BlurBackground';
 
 
 export type MODE_PLAY = "AI" | "User";
@@ -28,6 +33,7 @@ const Game: React.FC = () => {
     const handleNewGame = () => {
         setOpenNewGame(false);
         setOpenModeGame(true);
+        setIsVsAI(true);
     }
 
     const handleResumeGame = () => {
@@ -35,7 +41,7 @@ const Game: React.FC = () => {
         navigate("/game");
     }
 
-    const handleRetour = () => {
+    const handleCancelGame = () => {
         setOpenNewGame(false);
         navigate("/");
     }
@@ -60,208 +66,64 @@ const Game: React.FC = () => {
 
     return (
         <div>
-            <Dialog
-                    open={openModeGame}
-                    onClose={(_, reason) => reason !== 'backdropClick' && reason !== 'escapeKeyDown' && setOpenModeGame(false)}
-                    sx={{
-                        '& .MuiDialog-paper': {
-                            borderRadius: '12px',
-                            padding: 2,
-                            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
-                            minWidth: '320px',
-                            backgroundColor: '#fff',
-                        }
-                    }}
-                >
-                    <DialogTitle id="alert-dialog-title-mode-game">Quel mode voulez-vous jouer ?</DialogTitle>
-                    <DialogActions>
-                        <Button onClick={() => handleModeGame(!isVsAI)} color="primary">
-                            <Typography variant="h6" fontWeight="bold">1vs1</Typography>
-                        </Button>
-                        <Button onClick={() => handleModeGame(isVsAI)} color="inherit">
-                            <Typography variant="h6" fontWeight="bold">AI</Typography>
-                        </Button>
-                    </DialogActions>
+            <ChooseModeGame
+                open={openModeGame}
+                setOpenModeGame={setOpenModeGame}
+                onSelectMode={handleModeGame}
+                isVsAI={isVsAI}
+            />
 
-                </Dialog>
+            <ChooseDifficultyGameForAI
+                open={openDifficulty}
+                setOpenDifficulty={setOpenDifficulty}
+                onSelectDifficulty={handleSelectDifficulty}
+                listDifficulty={listsDifficulty}
+            />
 
-                <Dialog
-                    open={openDifficulty}
-                    onClose={(_, reason) => reason !== 'backdropClick' && reason !== 'escapeKeyDown' && setOpenDifficulty(false)}
-                    sx={{
-                        '& .MuiDialog-paper': {
-                            borderRadius: '12px',
-                            padding: 2,
-                            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
-                            minWidth: '320px',
-                            backgroundColor: '#fff',
-                        }
-                    }}
-                >
-                    <DialogTitle id="alert-dialog-title-difficulty-game" sx={{ justifyContent: "space-between" }}>Choisissez le niveau de difficulté de l'IA que vous voulez.</DialogTitle>
-                    <DialogActions>
-                        {listsDifficulty.map((difficulty) => (
-                            <Button key={difficulty.id} onClick={handleSelectDifficulty} color="success">
-                                <Typography variant="h6" fontWeight="bold">{difficulty.name}</Typography>
-                            </Button>
-                        ))}
-                    </DialogActions>
-                </Dialog>
-
-                <Dialog
-                    open={openChoosePlayer}
-                    onClose={(_, reason) => reason !== 'backdropClick' && reason !== 'escapeKeyDown' && setOpenChoosePlayer(false)}
-                    sx={{
-                        '& .MuiDialog-paper': {
-                            borderRadius: '12px',
-                            padding: 2,
-                            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
-                            minWidth: '320px',
-                            backgroundColor: '#fff',
-                        }
-                    }}
-                >
-                    <DialogTitle id="alert-dialog-title-difficulty-game" >Choisissez la couleur de votre personnage préféré</DialogTitle>
-                    <DialogActions>
-                        <Button
-                            onClick={() => handleChooseColor("red")}
-                            color="error"
-                        >
-                            <Typography variant="h6" fontWeight="bold">Rouge</Typography>
-                        </Button>
-                        <Button
-                            onClick={() => handleChooseColor("blue")}
-                            color="primary"
-                        >
-                            <Typography variant="h6" fontWeight="bold">Bleu</Typography>
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+            <ChoosePlayerColorGame
+                open={openChoosePlayer}
+                setOpenChoosePlayer={setOpenChoosePlayer}
+                onSelectColor={handleChooseColor}
+            />
 
             {
                 isGameStarted &&
                 <>
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            inset: 0,
-                            backdropFilter: 'blur(8px)',
-                            WebkitBackdropFilter: 'blur(8px)',
-                            backgroundColor: 'rgba(0,0,0,0.2)',
-                            zIndex: -1,
-                        }}
-                    />
+                    <BlurBackground />
 
                     <Box display="flex" flexDirection="column">
                         <ControlPanel
                             onNewGame={() => setOpenNewGame(true)}
-                        >
+                        />
 
-                        </ControlPanel>
-                        <Dialog
+                        <ChooseRestartNewGame
                             open={openNewGame}
-                            onClose={(_, reason) => reason !== 'backdropClick' && reason !== 'escapeKeyDown' && setOpenNewGame(false)}
-                            sx={{
-                                '& .MuiDialog-paper': {
-                                    borderRadius: '12px',
-                                    padding: 2,
-                                    boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
-                                    minWidth: '320px',
-                                    backgroundColor: '#fff',
-                                }
-                            }}
-                        >
-                            <DialogTitle id="alert-dialog-title-start-game">Voulez-vous démarrer une nouvelle partie ou continuer la partie ?</DialogTitle>
-                            <DialogActions>
-                                <Button onClick={handleNewGame} color="primary">
-                                    <Typography variant="h6" fontWeight="bold">Nouvelle</Typography>
-                                </Button>
-                                <Button onClick={handleResumeGame} color="inherit">
-                                    <Typography variant="h6" fontWeight="bold">Continue</Typography>
-                                </Button>
-                                <Button onClick={handleRetour} color="error">
-                                    <Typography variant="h6" fontWeight="bold">Retour</Typography>
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                            setOpenNewGame={setOpenNewGame}
+                            onSelectNewGame={handleNewGame}
+                            onSelectResumeGame={handleResumeGame}
+                            onSelectCancelGame={handleCancelGame}
+                        />
 
-                        <Dialog
+                        <ChooseModeGame
                             open={openModeGame}
-                            onClose={(_, reason) => reason !== 'backdropClick' && reason !== 'escapeKeyDown' && setOpenModeGame(false)}
-                            sx={{
-                                '& .MuiDialog-paper': {
-                                    borderRadius: '12px',
-                                    padding: 2,
-                                    boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
-                                    minWidth: '320px',
-                                    backgroundColor: '#fff',
-                                }
-                            }}
-                        >
-                            <DialogTitle id="alert-dialog-title-mode-game">Quel mode voulez-vous jouer ?</DialogTitle>
-                            <DialogActions>
-                                <Button onClick={() => handleModeGame(!isVsAI)} color="primary">
-                                    <Typography variant="h6" fontWeight="bold">1vs1</Typography>
-                                </Button>
-                                <Button onClick={() => handleModeGame(isVsAI)} color="inherit">
-                                    <Typography variant="h6" fontWeight="bold">AI</Typography>
-                                </Button>
-                            </DialogActions>
+                            setOpenModeGame={setOpenModeGame}
+                            onSelectMode={handleModeGame}
+                            isVsAI={isVsAI}
+                        />
 
-                        </Dialog>
-
-                        <Dialog
+                        <ChooseDifficultyGameForAI
                             open={openDifficulty}
-                            onClose={(_, reason) => reason !== 'backdropClick' && reason !== 'escapeKeyDown' && setOpenDifficulty(false)}
-                            sx={{
-                                '& .MuiDialog-paper': {
-                                    borderRadius: '12px',
-                                    padding: 2,
-                                    boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
-                                    minWidth: '320px',
-                                    backgroundColor: '#fff',
-                                }
-                            }}
-                        >
-                            <DialogTitle id="alert-dialog-title-difficulty-game" sx={{ justifyContent: "space-between" }}>Choisissez le niveau de difficulté de l'IA que vous voulez.</DialogTitle>
-                            <DialogActions>
-                                {listsDifficulty.map((difficulty) => (
-                                    <Button key={difficulty.id} onClick={handleSelectDifficulty} color="success">
-                                        <Typography variant="h6" fontWeight="bold">{difficulty.name}</Typography>
-                                    </Button>
-                                ))}
-                            </DialogActions>
-                        </Dialog>
+                            setOpenDifficulty={setOpenDifficulty}
+                            onSelectDifficulty={handleSelectDifficulty}
+                            listDifficulty={listsDifficulty}
+                        />
 
-                        <Dialog
+                        <ChoosePlayerColorGame
                             open={openChoosePlayer}
-                            onClose={(_, reason) => reason !== 'backdropClick' && reason !== 'escapeKeyDown' && setOpenChoosePlayer(false)}
-                            sx={{
-                                '& .MuiDialog-paper': {
-                                    borderRadius: '12px',
-                                    padding: 2,
-                                    boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
-                                    minWidth: '320px',
-                                    backgroundColor: '#fff',
-                                }
-                            }}
-                        >
-                            <DialogTitle id="alert-dialog-title-difficulty-game" >Choisissez la couleur de votre personnage préféré</DialogTitle>
-                            <DialogActions>
-                                <Button
-                                    onClick={() => handleChooseColor("red")}
-                                    color="error"
-                                >
-                                    <Typography variant="h6" fontWeight="bold">Rouge</Typography>
-                                </Button>
-                                <Button
-                                    onClick={() => handleChooseColor("blue")}
-                                    color="primary"
-                                >
-                                    <Typography variant="h6" fontWeight="bold">Bleu</Typography>
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                            setOpenChoosePlayer={setOpenChoosePlayer}
+                            onSelectColor={handleChooseColor}
+                        />
+
                         <Board playerColor={playerColor} />
                     </Box>
                 </>

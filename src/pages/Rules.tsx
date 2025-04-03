@@ -8,17 +8,6 @@ import jumpImg from "../assets/img/Jump.png"
 const Rules: React.FC = () => {
     return (
         <>
-            <Box
-                sx={{
-                    position: 'absolute',
-                    inset: 0,
-                    backdropFilter: 'blur(8px)',
-                    WebkitBackdropFilter: 'blur(8px)',
-                    backgroundColor: 'rgba(0,0,0,0.2)',
-                    zIndex: -1,
-                }}
-            />
-
             <Box maxWidth="800px" mx="auto" p={4}>
                 <Typography variant="h3" fontWeight="bold" mb={4} textAlign="center">
                     Les règles de Quoridor

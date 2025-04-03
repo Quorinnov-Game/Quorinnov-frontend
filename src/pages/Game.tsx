@@ -7,7 +7,6 @@ import ChooseModeGame from '../components/Notify/ChooseModeGame';
 import ChooseDifficultyGameForAI from '../components/Notify/ChooseDifficultyGameForAI';
 import ChoosePlayerColorGame from '../components/Notify/ChoosePlayerColorGame';
 import ChooseRestartNewGame from '../components/Notify/ChooseNewGame';
-import BlurBackground from '../config/BlurBackground';
 
 
 export type MODE_PLAY = "AI" | "User";
@@ -88,9 +87,7 @@ const Game: React.FC = () => {
 
             {
                 isGameStarted &&
-                <>
-                    <BlurBackground />
-
+                <div>
                     <Box display="flex" flexDirection="column">
                         <ControlPanel
                             onNewGame={() => setOpenNewGame(true)}
@@ -126,7 +123,7 @@ const Game: React.FC = () => {
 
                         <Board playerColor={playerColor} />
                     </Box>
-                </>
+                </div>
             }
         </div>
     );

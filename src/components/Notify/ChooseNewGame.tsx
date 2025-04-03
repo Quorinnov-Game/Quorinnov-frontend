@@ -35,6 +35,7 @@ const ChooseRestartNewGame: React.FC<ChooseRestartNewGameProps> = ({ open, onSel
                 <Button onClick={onSelectCancelGame} color="error">
                     <Typography variant="h6" fontWeight="bold">Retour</Typography>
                 </Button>
+
             </DialogActions>
         </Dialog>
     )

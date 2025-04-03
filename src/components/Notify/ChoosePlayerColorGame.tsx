@@ -6,9 +6,11 @@ type ChoosePlayerColorGameProps = {
     open: boolean,
     onSelectColor: (color: TYPES_COLOR) => void,
     setOpenChoosePlayer: (open: boolean) => void,
+    handleCancelStep:() => void;
+
 }
 
-const ChoosePlayerColorGame: React.FC<ChoosePlayerColorGameProps> = ({ open, onSelectColor, setOpenChoosePlayer }) => {
+const ChoosePlayerColorGame: React.FC<ChoosePlayerColorGameProps> = ({ open, onSelectColor, setOpenChoosePlayer, handleCancelStep }) => {
     return (
         <Dialog
             open={open}
@@ -30,6 +32,9 @@ const ChoosePlayerColorGame: React.FC<ChoosePlayerColorGameProps> = ({ open, onS
                 </Button>
                 <Button onClick={() => onSelectColor("blue")} color="primary">
                     <Typography variant="h6" fontWeight="bold">Bleu</Typography>
+                </Button>
+                <Button onClick={() => handleCancelStep()} color="error">
+                    <Typography variant="h6" fontWeight="bold">Retour</Typography>
                 </Button>
             </DialogActions>
         </Dialog>

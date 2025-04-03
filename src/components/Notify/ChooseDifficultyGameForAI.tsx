@@ -6,9 +6,10 @@ type ChooseDifficultyGameForAIProps = {
     onSelectDifficulty: () => void,
     setOpenDifficulty: (open: boolean) => void,
     listDifficulty: { id: number, name: string}[],
+    handleCancelStep: () => void;
 }
 
-const ChooseDifficultyGameForAI: React.FC<ChooseDifficultyGameForAIProps> = ({ open, onSelectDifficulty, setOpenDifficulty, listDifficulty }) => {
+const ChooseDifficultyGameForAI: React.FC<ChooseDifficultyGameForAIProps> = ({ open, onSelectDifficulty, setOpenDifficulty, listDifficulty , handleCancelStep}) => {
     return (
         <Dialog
             open={open}
@@ -30,6 +31,9 @@ const ChooseDifficultyGameForAI: React.FC<ChooseDifficultyGameForAIProps> = ({ o
                         <Typography variant="h6" fontWeight="bold">{difficulty.name}</Typography>
                     </Button>
                 ))}
+                <Button onClick={() => handleCancelStep()} color="error">
+                    <Typography variant="h6" fontWeight="bold">Retour</Typography>
+                </Button>
             </DialogActions>
         </Dialog>
     )

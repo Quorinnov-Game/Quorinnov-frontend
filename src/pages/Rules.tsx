@@ -4,8 +4,15 @@ import blockImg from "../assets/img/Block.png"
 import emplacementImg from "../assets/img/Emplacement1.png"
 import cannotBloqueImg from "../assets/img/CannotBloque.png"
 import jumpImg from "../assets/img/Jump.png"
+import { IconButton } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+import { useNavigate } from "react-router";
+
 
 const Rules: React.FC = () => {
+
+    const navigate = useNavigate();
+
     return (
         <>
             <Box
@@ -20,6 +27,20 @@ const Rules: React.FC = () => {
             />
 
             <Box maxWidth="800px" mx="auto" p={4}>
+                <Box display="flex" justifyContent="flex-end">
+                    <IconButton
+                        onClick={() => navigate('/')}
+                        sx={{
+                            backgroundColor: 'white',
+                            mb: 2,
+                            '&:hover': {
+                                backgroundColor: '#eee',
+                            }
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
                 <Typography variant="h3" fontWeight="bold" mb={4} textAlign="center">
                     Les règles de Quoridor
                 </Typography>

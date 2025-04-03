@@ -6,9 +6,10 @@ type ChooseModeGameProps = {
     onSelectMode: (ai: boolean) => void,
     setOpenModeGame: (open: boolean) => void,
     isVsAI: boolean,
+    handleCancelStep:() => void;
 }
 
-const ChooseModeGame: React.FC<ChooseModeGameProps> = ({ open, onSelectMode, setOpenModeGame, isVsAI }) => {
+const ChooseModeGame: React.FC<ChooseModeGameProps> = ({ open, onSelectMode, setOpenModeGame, isVsAI, handleCancelStep }) => {
     return (
         <Dialog
             open={open}
@@ -30,6 +31,9 @@ const ChooseModeGame: React.FC<ChooseModeGameProps> = ({ open, onSelectMode, set
                 </Button>
                 <Button onClick={() => onSelectMode(isVsAI)} color="inherit">
                     <Typography variant="h6" fontWeight="bold">AI</Typography>
+                </Button>
+                <Button onClick={() => handleCancelStep()} color="error">
+                    <Typography variant="h6" fontWeight="bold">Retour</Typography>
                 </Button>
             </DialogActions>
         </Dialog>

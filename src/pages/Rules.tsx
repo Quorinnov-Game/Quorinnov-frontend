@@ -4,6 +4,7 @@ import blockImg from "../assets/img/Block.png"
 import emplacementImg from "../assets/img/Emplacement1.png"
 import cannotBloqueImg from "../assets/img/CannotBloque.png"
 import jumpImg from "../assets/img/Jump.png"
+import jump1Img from "../assets/img/Jump1.png"
 
 const Rules: React.FC = () => {
     return (
@@ -32,18 +33,31 @@ const Rules: React.FC = () => {
 
                         {/* Section 3 */}
                         <Box width={{ xs: '100%', sm: '45%' }} textAlign="center">
+                            <img src={jumpImg} alt="Mur" width="100%" style={{ borderRadius: 8, marginBottom: 8 }} />
+                            <Typography variant="h6" fontWeight="medium" gutterBottom>Déplacer des pions</Typography>
+                            <Typography variant="body2">Il est possible de sauter par-dessus l'adversaire s'il bloque le chemin.</Typography>
+                        </Box>
+
+                        {/* Section 4 */}
+                        <Box width={{ xs: '100%', sm: '45%' }} textAlign="center">
+                            <img src={jump1Img} alt="Mur" width="100%" style={{ borderRadius: 8, marginBottom: 8 }} />
+                            <Typography variant="h6" fontWeight="medium" gutterBottom>Déplacer des pions</Typography>
+                            <Typography variant="body2">Vous pouvez sauter par-dessus un adversaire si celui-ci se trouve sur la case adjacente et qu'aucun mur ne vous en empêche.</Typography>
+                        </Box>
+
+                        {/* Section 5 */}
+                        <Box width={{ xs: '100%', sm: '45%' }} textAlign="center">
                             <img src={blockImg} alt="Mur" width="100%" style={{ borderRadius: 8, marginBottom: 8 }} />
                             <Typography variant="h6" fontWeight="medium" gutterBottom>Placer des murs</Typography>
                             <Typography variant="body2">Utilisez vos murs stratégiquement pour bloquer votre adversaire.</Typography>
                         </Box>
 
-                        {/* Section 4 */}
+                        {/* Section 6 */}
                         <Box width={{ xs: '100%', sm: '45%' }} textAlign="center">
                             <img src={cannotBloqueImg} alt="Mur" width="100%" style={{ borderRadius: 8, marginBottom: 8 }} />
                             <Typography variant="h6" fontWeight="medium" gutterBottom>Placer des murs</Typography>
                             <Typography variant="body2">Vous ne pouvez pas bloquer totalement le chemin vers la ligne opposée.</Typography>
                         </Box>
-
 
                     </Box>
                 </Paper>

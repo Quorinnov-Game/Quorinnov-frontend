@@ -10,26 +10,26 @@ type InfoPanelProps = {
     showWallControls?: boolean;
 };
 
-// const WallBar = ({ count }: { count: number }) => {
-//     return (
-//         <Box display="flex" flexDirection="row" gap={1} justifyContent="center" mt={1}>
-//             <Box
-//                 sx={{
-//                     width: "53px",
-//                     height: "18px",
-//                     borderRadius: "2px",
-//                     background: `
-//                         repeating-linear-gradient(90deg, transparent, transparent 8px, #d8a08c 8px, #d8a08c 9px),
-//                         repeating-linear-gradient(180deg, transparent, transparent 8px, #d8a08c 8px, #d8a08c 9px)
-//                     `,
-//                     backgroundColor: '#8B7355',
-//                     boxShadow: "0 0 2px rgba(0,0,0,0.5)",
-//                 }}
-//             />
-//             <Typography variant="body2" color="textSecondary">{count}</Typography>
-//         </Box>
-//     )
-// }
+const WallBar = ({ count }: { count: number }) => {
+    return (
+        <Box display="flex" flexDirection="row" gap={1} justifyContent="center" mt={1}>
+            <Box
+                sx={{
+                    width: "53px",
+                    height: "18px",
+                    borderRadius: "2px",
+                    background: `
+                        repeating-linear-gradient(90deg, transparent, transparent 8px, #d8a08c 8px, #d8a08c 9px),
+                        repeating-linear-gradient(180deg, transparent, transparent 8px, #d8a08c 8px, #d8a08c 9px)
+                    `,
+                    backgroundColor: '#5c5244',
+                    boxShadow: "0 0 2px rgba(0,0,0,0.5)",
+                }}
+            />
+            <Typography variant="body2" color="textSecondary">{count}</Typography>
+        </Box>
+    )
+}
 
 const InfoPanel: React.FC<InfoPanelProps> = ({ players, turn, onValidateWall, onCancelWall, showWallControls }) => {
 
@@ -52,14 +52,14 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ players, turn, onValidateWall, on
 
             {/* Player */}
             <Box mb={1}>
-                {/* <Typography variant="body1" color="textSecondary" fontWeight="bold"><span style={{color: "red"}}>Vous</span></Typography>
-                <WallBar count={players.P1.wallsRemaining ?? 0} /> */}
+                <Typography variant="body1" color="textSecondary" fontWeight="bold"><span style={{color: "red"}}>Vous</span></Typography>
+                <WallBar count={players.P1.wallsRemaining ?? 0} />
             </Box>
 
             {/* AI */}
             <Box mb={1}>
-                {/* <Typography variant="body1" color="textSecondary" fontWeight="bold"><span style={{color: "blue"}}>AI</span></Typography>
-                <WallBar count={players.P2.wallsRemaining ?? 0} /> */}
+                <Typography variant="body1" color="textSecondary" fontWeight="bold"><span style={{color: "blue"}}>AI</span></Typography>
+                <WallBar count={players.P2.wallsRemaining ?? 0} />
             </Box>
 
             <Divider sx={{ width: "100%", mb: 1 }} />

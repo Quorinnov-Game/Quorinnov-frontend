@@ -32,3 +32,11 @@ npm run dev
 ```
 
 Vous pouvez lire help en tapez `h+enter`, il va lister toutes les consignes par exemple `o+enter` pour ouvrir le navigateur (l'interface utilisateur)
+
+Pour les anciens utilisateurs n'ont pas encore les frameworks tels que framer-motion et tsparticles (effect animation).
+Note: - tsparticles-preset-fireworks : effect fireworks pour vainqueur
+
+```bash
+npm install framer-motion tsparticles tsparticles-preset-fireworks tsparticles-slim react-tsparticles
+npm audit fix
+```

@@ -4,6 +4,8 @@ import Square from './Square';
 import { Player } from '../../@types/player';
 import InfoPanel from '../Controls/InfoPanel';
 import { TYPES_COLOR } from '../../pages/Game';
+import VictoryOverlay from '../Effect/VictoryOverlay';
+import DefeatOverlay from '../Effect/DefeatOverlay';
 
 export const BOARD_SIZE = 9;
 export const GAP_CELLULE = 10;
@@ -39,6 +41,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
     const [players, setPlayers] = useState<{ P1: Player, P2: Player }>(initialPlayers);
     const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
     const [turn, setTurn] = useState<"P1" | "P2">("P1")
+    const [victory, setVictory] = useState(false);
 
     useEffect(() => {
         if (!playerColor) return;
@@ -110,11 +113,20 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
     };
 
     const movePlayer = (x: number, y: number) => {
-        if (!selectedPlayer || !selectedPlayer.isPlayer || turn !== "P1") return;
+        if (!selectedPlayer) return;
         if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) return;
 
         const isLegalMove = getValidMoves().some(pos => pos.x === x && pos.y === y);
         if (!isLegalMove) return;
+
+        if (x === 0) {
+            setVictory(true);
+            players.P1.isWinner = true;
+        }
+        else if ( players.P2.position.x === BOARD_SIZE - 1) {
+            setVictory(true);
+            players.P2.isWinner = true;
+        }
 
         setPlayers(prev => ({
             ...prev,
@@ -169,6 +181,9 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
                     ))
                 ))}
             </Box>
+
+            {victory && <VictoryOverlay players={players}/>}
+            {/* {victory && <DefeatOverlay/>} */}
 
             <InfoPanel players={players} turn={turn} />
         </Box>

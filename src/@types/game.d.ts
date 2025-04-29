@@ -6,8 +6,10 @@ export type Position = {
 export type Wall = {
     playerId: string;
     position: Position;
-    orientation: "horizontal" | "vertical";
+    orientation: Orientation;
 };
+
+export type Orientation = "horizontal" | "vertical";
 
 export type GameState = {
     board : string[][];

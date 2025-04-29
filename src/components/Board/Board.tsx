@@ -46,6 +46,8 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
     const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
     const [turn, setTurn] = useState<"P1" | "P2">("P1")
     const [victory, setVictory] = useState(false);
+    const [walls, setWalls] = useState<Wall[]>([]);
+    const [temporaryWall, setTemporaryWall] = useState<Wall | null>(null);
 
     useEffect(() => {
         if (!playerColor) return;
@@ -143,7 +145,47 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
         setTurn(prev => prev === "P1" ? "P2" : "P1")
     };
 
+    const handlePlaceWall = (wall: Wall) => {
+        if (wall.playerId !== players.P1.id) return;
 
+        const isValidHorizontal = wall.position.x >= 0 && wall.position.x < BOARD_SIZE - 1 &&
+            wall.position.y > 0 && wall.position.y < BOARD_SIZE &&
+            wall.orientation === HORIZONTAL;
+        const isValidVertical = wall.position.x > 0 && wall.position.x < BOARD_SIZE &&
+            wall.position.y >= 0 && wall.position.y < BOARD_SIZE - 1 &&
+            wall.orientation === VERTICAL;
+        const isOverlappingWall = walls.some(
+            w => (
+                w.position.x === wall.position.x &&
+                w.position.y === wall.position.y &&
+                w.orientation === wall.orientation
+            )
+        );
+        const isValid = (isValidHorizontal || isValidVertical) &&
+            !isOverlappingWall &&
+            players.P1.wallsRemaining > 0;
+
+        if (!isValid) return;
+
+        setTemporaryWall(wall);
+    };
+
+    const handleValidateWall = () => {
+        if (!temporaryWall) return;
+        setWalls(prev => [...prev, temporaryWall]);
+        setPlayers(prev => ({
+            ...prev,
+            P1: {
+                ...prev.P1,
+                wallsRemaining: prev.P1.wallsRemaining - 1
+            }
+        }));
+        setTemporaryWall(null);
+    }
+
+    const handleCancelWall = () => {
+        setTemporaryWall(null);
+    }
 
     return (
         <Box

@@ -9,6 +9,17 @@ type WallPlacerProps = {
     walls: Wall[];
 }
 
+/**
+ * WallPlacer component
+ * @param playerId - The id of the player
+ * @param walls - The walls already placed on the board
+ * @param onPlaceWall - The function to call when the player places a wall
+ * @returns WallPlacer component
+ * @description The WallPlacer component is used to display a wall available on the board.
+ * It allows the player to place a wall on the board by clicking on the wall.
+ * The wall is displayed as a transparent box that changes color when hovered.
+ * The wall is placed on the board when the player clicks on it.
+ */
 const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall }) => {
     const [hoveredHorizontal, setHoveredHorizontal] = React.useState<Wall | null>(null);
     const [hoveredVertical, setHoveredVertical] = React.useState<Wall | null>(null);

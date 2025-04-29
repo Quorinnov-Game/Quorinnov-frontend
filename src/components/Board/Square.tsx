@@ -13,19 +13,34 @@ type SquareProps = {
     isValidMove?: boolean,
     turn: "P1" | "P2"
 };
+
+/**
+ * Square component
+ * @param x - The x position of the square
+ * @param y - The y position of the square
+ * @param players - The players on the board
+ * @param selectedPlayer - The selected player
+ * @param onSelectPlayer - The function to call when the player is selected
+ * @param onMovePlayer - The function to call when the player is moved
+ * @param isValidMove - If true, the move is valid
+ * @param turn - The current turn
+ * @returns Square component
+ * @description The Square component is used to display a square on the board.
+ * It contains the player on the square.
+ */
 const Square: React.FC<SquareProps> = ({ x, y, players, selectedPlayer, onSelectPlayer, onMovePlayer, isValidMove, turn }: SquareProps) => {
     const playerHere = Object.values(players).find(player => player.position?.x === x && player?.position.y === y);
     const isYourPlayer = playerHere?.isPlayer === true;
     const isYourTurn = playerHere?.isPlayer && turn === "P1";
     const isTopOrBotRow = x === 0 || x === BOARD_SIZE - 1;
 
-    const onAction = () => {
+    const onPlaceToDirection = () => {
             isYourPlayer && isYourTurn ?
                 onSelectPlayer(playerHere) : (selectedPlayer && isValidMove && onMovePlayer(x, y))
     }
     return (
         <Box
-            onClick={onAction}
+            onClick={onPlaceToDirection}
             sx={{
                 width: "100%",
                 height: "100%",

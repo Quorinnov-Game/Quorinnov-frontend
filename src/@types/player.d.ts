@@ -3,7 +3,7 @@ export type Player = {
     name?: string;
     color?: string;
     position?: Position;
-    wallsRemaining?: number;
+    wallsRemaining: number;
     isWinner?: boolean;
     isPlayer?: boolean;
 }

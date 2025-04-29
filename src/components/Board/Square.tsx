@@ -1,4 +1,4 @@
-import { Alert, Box, Dialog } from "@mui/material"
+import { Box } from "@mui/material"
 import { Player } from "../../@types/player";
 import PlayerShow from "../Player/PlayerShow";
 import { BOARD_SIZE } from "./Board";
@@ -46,7 +46,8 @@ const Square: React.FC<SquareProps> = ({ x, y, players, selectedPlayer, onSelect
                 transition: "all 0.2s",
                 "&:hover": isYourPlayer || isValidMove ? {
                     backgroundColor: isValidMove ? "#FFEB3B" : "#f8bbd0"
-                } : {}
+                } : {},
+                zIndex: 1, // to make sure the square is on top of the wall, if zIndex of square is less than wall, cannot click on square
             }}
         >
             {playerHere && (

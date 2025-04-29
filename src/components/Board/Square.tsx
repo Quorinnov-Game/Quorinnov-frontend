@@ -50,7 +50,7 @@ const Square: React.FC<SquareProps> = ({ x, y, players, selectedPlayer, onSelect
             }}
         >
             {playerHere && (
-                <PlayerShow color={playerHere.color} id={playerHere.id} />
+                <PlayerShow color={playerHere.color} id={playerHere.id} wallsRemaining={playerHere.wallsRemaining}/>
             )}
         </Box>
     );

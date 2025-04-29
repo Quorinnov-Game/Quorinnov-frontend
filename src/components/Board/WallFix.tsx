@@ -7,6 +7,14 @@ type WallFixProps = {
     isTemporary?: boolean;
 }
 
+/**
+ * WallFix component is used to display a wall on the board
+ * @param wall - The wall to display
+ * @param isTemporary - If true, the wall is displayed as a temporary wall
+ * @returns WallFix component
+ * @description The WallFix component is used to display a wall on the board.
+ * It contains the temporary wall and the wall fixed on the board.
+ */
 const WallFix: React.FC<WallFixProps> = ({ wall, isTemporary = false }) => {
     const cellSize = GRID_SIZE + GAP_CELLULE;
 

@@ -6,6 +6,9 @@ import InfoPanel from '../Controls/InfoPanel';
 import { TYPES_COLOR } from '../../pages/Game';
 import VictoryOverlay from '../Effect/VictoryOverlay';
 import DefeatOverlay from '../Effect/DefeatOverlay';
+import { Wall } from '../../@types/game';
+import WallPlacer from './WallPlacer';
+import WallFix from './WallFix';
 
 export const BOARD_SIZE = 9;
 export const GAP_CELLULE = 10;
@@ -226,6 +229,23 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
                         />
                     ))
                 ))}
+                {walls.map((wall, index) => (
+                    <WallFix
+                        key={index}
+                        wall={wall}
+                    />
+                ))}
+                {temporaryWall && (
+                    <WallFix
+                        wall={temporaryWall}
+                        isTemporary={true}
+                    />
+                )}
+                <WallPlacer
+                    playerId={players.P1.id}
+                    onPlaceWall={handlePlaceWall}
+                    walls={walls}
+                />
             </Box>
 
             {victory && <VictoryOverlay players={players}/>}

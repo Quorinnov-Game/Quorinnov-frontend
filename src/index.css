@@ -28,7 +28,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  background: url('/public/Background.png');
+  background: url('Background.png');
   background-size: contain;
   /* overflow-x: hidden;
   background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);

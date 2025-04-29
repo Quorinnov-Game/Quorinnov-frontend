@@ -10,6 +10,10 @@ import DefeatOverlay from '../Effect/DefeatOverlay';
 export const BOARD_SIZE = 9;
 export const GAP_CELLULE = 10;
 export const GRID_SIZE = 50;
+export const PADDING_BOARD = 8;
+export const HORIZONTAL = "horizontal";
+export const VERTICAL = "vertical";
+
 const NAME_PLAYER = "Player 1";
 type BoardProps = {
     playerColor: TYPES_COLOR,

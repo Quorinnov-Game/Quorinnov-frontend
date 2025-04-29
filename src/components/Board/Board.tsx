@@ -208,7 +208,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
                     position: "relative",
                     width: "max-content",
                     margin: "auto",
-                    padding: "16px",
+                    padding: `${PADDING_BOARD}px`,
                     aspectRatio: "1/1",
                     backgroundColor: "#f0f0f0",
                     border: "1px solid black",

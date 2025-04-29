@@ -4,7 +4,7 @@ export type Position = {
 }
 
 export type Wall = {
-    playerId: string;
+    playerId: id;
     position: Position;
     orientation: Orientation;
 };

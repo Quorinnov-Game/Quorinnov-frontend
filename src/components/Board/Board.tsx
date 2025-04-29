@@ -251,7 +251,13 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
             {victory && <VictoryOverlay players={players}/>}
             {/* {victory && <DefeatOverlay/>} */}
 
-            <InfoPanel players={players} turn={turn} />
+            <InfoPanel
+                players={players}
+                turn={turn}
+                onValidateWall={handleValidateWall}
+                onCancelWall={handleCancelWall}
+                showWallControls={!!temporaryWall}
+            />
         </Box>
     );
 };

@@ -5,11 +5,10 @@ type ChooseRestartNewGameProps = {
     open: boolean,
     onSelectNewGame: () => void,
     onSelectResumeGame: () => void,
-    onSelectCancelGame: () => void,
     setOpenNewGame: (open: boolean) => void,
 }
 
-const ChooseRestartNewGame: React.FC<ChooseRestartNewGameProps> = ({ open, onSelectNewGame, onSelectResumeGame, onSelectCancelGame, setOpenNewGame }) => {
+const ChooseRestartNewGame: React.FC<ChooseRestartNewGameProps> = ({ open, onSelectNewGame, onSelectResumeGame, setOpenNewGame }) => {
     return (
         <Dialog
             open={open}
@@ -31,9 +30,6 @@ const ChooseRestartNewGame: React.FC<ChooseRestartNewGameProps> = ({ open, onSel
                 </Button>
                 <Button onClick={onSelectResumeGame} color="inherit">
                     <Typography variant="h6" fontWeight="bold">Continue</Typography>
-                </Button>
-                <Button onClick={onSelectCancelGame} color="error">
-                    <Typography variant="h6" fontWeight="bold">Retour</Typography>
                 </Button>
             </DialogActions>
         </Dialog>

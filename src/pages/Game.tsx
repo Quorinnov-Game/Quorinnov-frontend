@@ -8,31 +8,27 @@ import ChooseDifficultyGameForAI from '../components/Notify/ChooseDifficultyGame
 import ChoosePlayerColorGame from '../components/Notify/ChoosePlayerColorGame';
 import ChooseRestartNewGame from '../components/Notify/ChooseNewGame';
 
-
-export type MODE_PLAY = "AI" | "User";
 export type TYPES_COLOR = "red" | "blue";
+const difficulties = [
+    { id: 1, name: "Débutant" },
+    { id: 2, name: "Intermédiaire" },
+    { id: 3, name: "Avancé" },
+    { id: 4, name: "Master" },
+]
 
 const Game: React.FC = () => {
     const navigate = useNavigate();
-    const listsDifficulty = [
-        { id: 1, name: "Débutant" },
-        { id: 2, name: "Intermédiaire" },
-        { id: 3, name: "Avancé" },
-        { id: 4, name: "Master" },
-    ]
+    const listsDifficulty = difficulties;
     const [openNewGame, setOpenNewGame] = useState(false);
     const [openDifficulty, setOpenDifficulty] = useState(false);
     const [openChoosePlayer, setOpenChoosePlayer] = useState(false);
     const [playerColor, setPlayerColor] = useState<TYPES_COLOR>("red");
     const [isGameStarted, setIsGameStarted] = useState(false);
     const [openModeGame, setOpenModeGame] = useState(true);
-    const [isVsAI, setIsVsAI] = useState(true)
-
 
     const handleNewGame = () => {
         setOpenNewGame(false);
         setOpenModeGame(true);
-        setIsVsAI(true);
     }
 
     const handleResumeGame = () => {
@@ -41,14 +37,23 @@ const Game: React.FC = () => {
     }
 
     const handleCancelGame = () => {
-        setOpenNewGame(false);
-        navigate("/");
+        setOpenNewGame(true);
+        setOpenModeGame(false);
     }
 
-    const handleModeGame = (vsAI: boolean) => {
-        setIsVsAI(vsAI);
+    const handleCancelChooseColorPlayer = () => {
+        setOpenChoosePlayer(false);
+        setOpenModeGame(true);
+    }
+
+    const handleCancelChooseDifficulty = () => {
+        setOpenDifficulty(false);
+        setOpenModeGame(true);
+    }
+
+    const handleModeGame = (m: string) => {
         setOpenModeGame(false);
-        vsAI ? setOpenDifficulty(true) : setOpenChoosePlayer(true)
+        m === "AI" ? setOpenDifficulty(true) : setOpenChoosePlayer(true)
     }
 
     const handleSelectDifficulty = () => {
@@ -69,7 +74,7 @@ const Game: React.FC = () => {
                 open={openModeGame}
                 setOpenModeGame={setOpenModeGame}
                 onSelectMode={handleModeGame}
-                isVsAI={isVsAI}
+                onCancelGame={() => navigate("/")} // Back to home
             />
 
             <ChooseDifficultyGameForAI
@@ -77,12 +82,14 @@ const Game: React.FC = () => {
                 setOpenDifficulty={setOpenDifficulty}
                 onSelectDifficulty={handleSelectDifficulty}
                 listDifficulty={listsDifficulty}
+                onCancelChooseDifficulty={handleCancelChooseDifficulty}
             />
 
             <ChoosePlayerColorGame
                 open={openChoosePlayer}
                 setOpenChoosePlayer={setOpenChoosePlayer}
                 onSelectColor={handleChooseColor}
+                onCancelChooseColorPlayer={handleCancelChooseColorPlayer}
             />
 
             {
@@ -98,14 +105,13 @@ const Game: React.FC = () => {
                             setOpenNewGame={setOpenNewGame}
                             onSelectNewGame={handleNewGame}
                             onSelectResumeGame={handleResumeGame}
-                            onSelectCancelGame={handleCancelGame}
                         />
 
                         <ChooseModeGame
                             open={openModeGame}
                             setOpenModeGame={setOpenModeGame}
                             onSelectMode={handleModeGame}
-                            isVsAI={isVsAI}
+                            onCancelGame={handleCancelGame}
                         />
 
                         <ChooseDifficultyGameForAI
@@ -113,12 +119,14 @@ const Game: React.FC = () => {
                             setOpenDifficulty={setOpenDifficulty}
                             onSelectDifficulty={handleSelectDifficulty}
                             listDifficulty={listsDifficulty}
+                            onCancelChooseDifficulty={handleCancelChooseDifficulty}
                         />
 
                         <ChoosePlayerColorGame
                             open={openChoosePlayer}
                             setOpenChoosePlayer={setOpenChoosePlayer}
                             onSelectColor={handleChooseColor}
+                            onCancelChooseColorPlayer={handleCancelChooseColorPlayer}
                         />
 
                         <Board playerColor={playerColor} />

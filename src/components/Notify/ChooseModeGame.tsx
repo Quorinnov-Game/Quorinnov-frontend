@@ -3,12 +3,12 @@ import React from "react"
 
 type ChooseModeGameProps = {
     open: boolean,
-    onSelectMode: (ai: boolean) => void,
+    onSelectMode: (mode: string) => void,
+    onCancelGame?: () => void,
     setOpenModeGame: (open: boolean) => void,
-    isVsAI: boolean,
 }
 
-const ChooseModeGame: React.FC<ChooseModeGameProps> = ({ open, onSelectMode, setOpenModeGame, isVsAI }) => {
+const ChooseModeGame: React.FC<ChooseModeGameProps> = ({ open, onSelectMode, onCancelGame, setOpenModeGame }) => {
     return (
         <Dialog
             open={open}
@@ -25,11 +25,14 @@ const ChooseModeGame: React.FC<ChooseModeGameProps> = ({ open, onSelectMode, set
         >
             <DialogTitle id="alert-dialog-title-mode-game">Voulez-vous jouer contre un joueur ou contre une IA ?</DialogTitle>
             <DialogActions>
-                <Button onClick={() => onSelectMode(!isVsAI)} color="primary">
+                <Button onClick={() => onSelectMode("player")} color="primary">
                     <Typography variant="h6" fontWeight="bold">1vs1</Typography>
                 </Button>
-                <Button onClick={() => onSelectMode(isVsAI)} color="inherit">
+                <Button onClick={() => onSelectMode("AI")} color="inherit">
                     <Typography variant="h6" fontWeight="bold">AI</Typography>
+                </Button>
+                <Button onClick={onCancelGame} color="error">
+                    <Typography variant="h6" fontWeight="bold">Retour</Typography>
                 </Button>
             </DialogActions>
         </Dialog>

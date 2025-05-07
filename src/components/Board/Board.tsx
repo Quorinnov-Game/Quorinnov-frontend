@@ -78,11 +78,12 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
     }, [playerColor]);
 
     const handleSelectPlayer = (player: Player) => {
+        if (turn === (player.id === 1 ? "P1" : "P2")) {
         if (selectedPlayer && selectedPlayer.id === player.id) {
             setSelectedPlayer(null);
+            } else {
+                setSelectedPlayer(player);
         }
-        else {
-            setSelectedPlayer(player);
         }
     };
 

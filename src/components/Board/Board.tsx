@@ -132,7 +132,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
             setVictory(true);
             players.P1.isWinner = true;
         }
-        else if ( players.P2.position.x === BOARD_SIZE - 1) {
+        else if (selectedPlayer.id === 2 && x === BOARD_SIZE - 1) {
             setVictory(true);
             players.P2.isWinner = true;
         }

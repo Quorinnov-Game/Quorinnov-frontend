@@ -4,6 +4,7 @@ import Particles from "react-tsparticles";
 import { useCallback, useEffect, useState } from "react";
 import { loadFireworksPreset } from "tsparticles-preset-fireworks";
 import { Player } from "../../@types/player";
+import { NAME_PLAYER1, NAME_PLAYER2 } from "../Board/Board";
 
 type VictoryOverlayProps = {
     players: {P1: Player, P2: Player};
@@ -68,7 +69,7 @@ const VictoryOverlay: React.FC<VictoryOverlayProps> = ({ players }) => {
                     sx={{
                         textShadow: "0 0 10px rgba(255, 255, 255, 0.8)",
                     }}>
-                    {players.P1.isWinner ? "Vous avez gagné!" : "L'IA a gagné!"}
+                    {players.P1.isWinner ? `${NAME_PLAYER1} avez gagné!` : `${NAME_PLAYER2} avez gagné!`}
                 </Typography>
             </motion.div>
         </Box>

@@ -26,6 +26,26 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
 
     const cellSize = GRID_SIZE + GAP_CELLULE;
 
+    const isWallCrossing = (wall: Wall) => {
+        // Vérifiez si le mur croise un autre mur
+        return walls.some(existingWall => {
+            if (wall.orientation === HORIZONTAL && existingWall.orientation === VERTICAL) {
+                // Vérifiez si le mur horizontal croise un mur vertical
+                return (
+                    (wall.position.x === existingWall.position.x - 1 &&
+                        wall.position.y === existingWall.position.y + 1)
+                );
+            } else if (wall.orientation === VERTICAL && existingWall.orientation === HORIZONTAL) {
+                // Vérifiez si le mur vertical croise un mur horizontal
+                return (
+                    (wall.position.x === existingWall.position.x + 1 &&
+                        wall.position.y === existingWall.position.y - 1)
+                );
+            }
+            return false;
+        });
+    }
+
     const isWallTooClose = (wall: Wall) => {
         // Vérifiez si le mur est trop proche d'un autre mur
         return walls.some(existingWall => {
@@ -70,9 +90,9 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
 
 
         // Vérifiez si la souris se trouve dans la zone vide entre les carrés
-        const isInHorizontalGap = offsetX > 0 && offsetX < cellSize && offsetY > 0 && offsetY < GAP_CELLULE/2;
+        const isInHorizontalGap = offsetX > 0 && offsetX < cellSize && offsetY > 0 && offsetY < GAP_CELLULE / 2;
         console.log("isInHorizontalGap", isInHorizontalGap)
-        const isInVerticalGap = offsetY > 0 && offsetY < cellSize && offsetX > 0 && offsetX < GAP_CELLULE/2;
+        const isInVerticalGap = offsetY > 0 && offsetY < cellSize && offsetX > 0 && offsetX < GAP_CELLULE / 2;
         console.log("isInVerticalGap", isInVerticalGap)
 
         // Évitez les murs hors limites
@@ -85,13 +105,13 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
                 orientation: HORIZONTAL,
                 playerId: playerId,
             };
-            if (!isWallTooClose(wallHorizontal)) {
+            if (!isWallTooClose(wallHorizontal) && !isWallCrossing(wallHorizontal)) {
                 setHoveredHorizontal(wallHorizontal);
             }
             else {
                 setHoveredHorizontal(null);
             }
-        } 
+        }
 
         else if (isInVerticalGap && y >= 0 && y < BOARD_SIZE - 1 && x > 0 && x < BOARD_SIZE) {
             const wallVertical: Wall = {
@@ -99,7 +119,7 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
                 orientation: VERTICAL,
                 playerId: playerId,
             };
-            if (!isWallTooClose(wallVertical)) {
+            if (!isWallTooClose(wallVertical) && !isWallCrossing(wallVertical)) {
                 setHoveredVertical(wallVertical);
             }
             else {

@@ -168,8 +168,28 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
                 w.orientation === wall.orientation
             )
         );
+
+        // Vérifiez si le mur croise un autre mur
+        const isCrossingWall = walls.some((w) => {
+            if (wall.orientation === HORIZONTAL && w.orientation === VERTICAL) {
+                // mur horizontal croise mur vertical
+                return (
+                    (wall.position.x === w.position.x - 1 &&
+                        wall.position.y === w.position.y + 1)
+                );
+            } else if (wall.orientation === VERTICAL && w.orientation === HORIZONTAL) {
+                // mur vertical croise mur horizontal
+                return (
+                    (wall.position.x === w.position.x + 1 &&
+                        wall.position.y === w.position.y - 1)
+                );
+            }
+            return false;
+        });
+
         const isValid = (isValidHorizontal || isValidVertical) &&
             !isOverlappingWall &&
+            !isCrossingWall &&
             players.P1.wallsRemaining > 0;
 
         if (!isValid) return;

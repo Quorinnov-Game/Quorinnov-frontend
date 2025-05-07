@@ -16,8 +16,8 @@ export const GRID_SIZE = 50;
 export const PADDING_BOARD = 8;
 export const HORIZONTAL = "horizontal";
 export const VERTICAL = "vertical";
-
-const NAME_PLAYER = "Player 1";
+export const NAME_PLAYER1 = "Player1";
+export const NAME_PLAYER2 = "Player2";
 type BoardProps = {
     playerColor: TYPES_COLOR,
 }
@@ -28,7 +28,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
         P1: {
             id: 1,
             color: playerColor,
-            name: NAME_PLAYER,
+            name: NAME_PLAYER1,
             position: { x: BOARD_SIZE - 1, y: Math.floor(BOARD_SIZE / 2) },
             wallsRemaining: 10,
             isWinner: false,
@@ -37,11 +37,11 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
         P2: {
             id: 2,
             color: playerColor === "red" ? "bleu" : "rouge",
-            name: "AI",
+            name: NAME_PLAYER2,
             position: { x: 0, y: Math.floor(BOARD_SIZE / 2) },
             wallsRemaining: 10,
             isWinner: false,
-            isPlayer: false,
+            isPlayer: true,
         }
     }
 
@@ -59,7 +59,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
             P1: {
                 id: 1,
                 color: playerColor,
-                name: NAME_PLAYER,
+                name: NAME_PLAYER1,
                 position: { x: BOARD_SIZE - 1, y: Math.floor(BOARD_SIZE / 2) },
                 wallsRemaining: 10,
                 isWinner: false,
@@ -68,11 +68,11 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
             P2: {
                 id: 2,
                 color: playerColor === "red" ? "blue" : "red",
-                name: "AI",
+                name: NAME_PLAYER2,
                 position: { x: 0, y: Math.floor(BOARD_SIZE / 2) },
                 wallsRemaining: 10,
                 isWinner: false,
-                isPlayer: false,
+                isPlayer: true,
             }
         });
     }, [playerColor]);

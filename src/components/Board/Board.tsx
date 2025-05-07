@@ -151,7 +151,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
 
     const handlePlaceWall = (wall: Wall) => {
         if (wall.playerId !== players.P1.id) return;
-        
+
         // Vérifiez si le mur est valide dans les limites du tableau
         const isValidHorizontal = wall.position.x >= 0 && wall.position.x < BOARD_SIZE - 1 &&
             wall.position.y > 0 && wall.position.y < BOARD_SIZE &&
@@ -159,7 +159,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
         const isValidVertical = wall.position.x > 0 && wall.position.x < BOARD_SIZE &&
             wall.position.y >= 0 && wall.position.y < BOARD_SIZE - 1 &&
             wall.orientation === VERTICAL;
-            
+
         // Vérifiez si le mur ne chevauche pas un autre mur
         const isOverlappingWall = walls.some(
             w => (
@@ -252,7 +252,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
                 />
             </Box>
 
-            {victory && <VictoryOverlay players={players}/>}
+            {victory && <VictoryOverlay players={players} />}
             {/* {victory && <DefeatOverlay/>} */}
 
             <InfoPanel

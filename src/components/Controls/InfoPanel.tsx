@@ -1,4 +1,4 @@
-import { Box, Typography, Divider, Stack, Button, Tooltip, IconButton, useMediaQuery } from "@mui/material";
+import { Box, Typography, Divider, Stack, Tooltip, IconButton } from "@mui/material";
 import { Player } from "../../@types/player";
 import { CheckBox, CloseOutlined } from "@mui/icons-material";
 import { NAME_PLAYER1, NAME_PLAYER2 } from "../Board/Board";
@@ -52,12 +52,12 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ players, turn, onValidateWall, on
             <Divider sx={{ width: "100%", mb: 1 }} />
 
             <Box mb={1}>
-                <Typography variant="body1" color="textSecondary" fontWeight="bold"><span style={{color: players.P1.color}}>{NAME_PLAYER1}</span></Typography>
+                <Typography variant="body1" color="textSecondary" fontWeight="bold"><span style={{ color: players.P1.color }}>{NAME_PLAYER1}</span></Typography>
                 <WallBar count={players.P1.wallsRemaining ?? 0} />
             </Box>
 
             <Box mb={1}>
-                <Typography variant="body1" color="textSecondary" fontWeight="bold"><span style={{color: players.P2.color}}>{NAME_PLAYER2}</span></Typography>
+                <Typography variant="body1" color="textSecondary" fontWeight="bold"><span style={{ color: players.P2.color }}>{NAME_PLAYER2}</span></Typography>
                 <WallBar count={players.P2.wallsRemaining ?? 0} />
             </Box>
 

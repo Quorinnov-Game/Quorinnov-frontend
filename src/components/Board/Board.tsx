@@ -128,7 +128,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
         const isLegalMove = getValidMoves().some(pos => pos.x === x && pos.y === y);
         if (!isLegalMove) return;
 
-        if (x === 0) {
+        if (selectedPlayer.id === 1 && x === 0) {
             setVictory(true);
             players.P1.isWinner = true;
         }

@@ -1,6 +1,7 @@
 import { Box, Typography, Divider, Stack, Button, Tooltip, IconButton, useMediaQuery } from "@mui/material";
 import { Player } from "../../@types/player";
 import { CheckBox, CloseOutlined } from "@mui/icons-material";
+import { NAME_PLAYER1, NAME_PLAYER2 } from "../Board/Board";
 
 type InfoPanelProps = {
     players: { P1: Player; P2: Player };
@@ -50,15 +51,13 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ players, turn, onValidateWall, on
             <Typography variant="h6" fontWeight="bold" color="textPrimary" mb={1}>Joueurs</Typography>
             <Divider sx={{ width: "100%", mb: 1 }} />
 
-            {/* Player */}
             <Box mb={1}>
-                <Typography variant="body1" color="textSecondary" fontWeight="bold"><span style={{color: "red"}}>Vous</span></Typography>
+                <Typography variant="body1" color="textSecondary" fontWeight="bold"><span style={{color: players.P1.color}}>{NAME_PLAYER1}</span></Typography>
                 <WallBar count={players.P1.wallsRemaining ?? 0} />
             </Box>
 
-            {/* AI */}
             <Box mb={1}>
-                <Typography variant="body1" color="textSecondary" fontWeight="bold"><span style={{color: "blue"}}>AI</span></Typography>
+                <Typography variant="body1" color="textSecondary" fontWeight="bold"><span style={{color: players.P2.color}}>{NAME_PLAYER2}</span></Typography>
                 <WallBar count={players.P2.wallsRemaining ?? 0} />
             </Box>
 
@@ -66,7 +65,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ players, turn, onValidateWall, on
 
             {/* Turn */}
             <Typography variant="subtitle1" color="primary" fontWeight="bold">
-                {turn === "P1" ? "Votre tour" : "Tour d'IA"}
+                {turn === "P1" ? `Tour du ${NAME_PLAYER1}` : `Tour du ${NAME_PLAYER2}`}
             </Typography>
 
             {/* --- WALL BUTTONS --- */}

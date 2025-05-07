@@ -31,12 +31,16 @@ type SquareProps = {
 const Square: React.FC<SquareProps> = ({ x, y, players, selectedPlayer, onSelectPlayer, onMovePlayer, isValidMove, turn }: SquareProps) => {
     const playerHere = Object.values(players).find(player => player.position?.x === x && player?.position.y === y);
     const isYourPlayer = playerHere?.isPlayer === true;
-    const isYourTurn = playerHere?.isPlayer && turn === "P1";
     const isTopOrBotRow = x === 0 || x === BOARD_SIZE - 1;
 
     const onPlaceToDirection = () => {
-            isYourPlayer && isYourTurn ?
-                onSelectPlayer(playerHere) : (selectedPlayer && isValidMove && onMovePlayer(x, y))
+            // isYourPlayer && isYourTurn ?
+            //     onSelectPlayer(playerHere) : (selectedPlayer && isValidMove && onMovePlayer(x, y))
+            if (!!playerHere && isYourPlayer) {
+                onSelectPlayer(playerHere);
+            } else if (selectedPlayer && isValidMove) {
+                onMovePlayer(x, y);
+            }
     }
     return (
         <Box

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Board from '../components/Board/Board';
+import Board, { BOARD_SIZE } from '../components/Board/Board';
 import { useNavigate } from 'react-router';
 import { Box } from '@mui/material';
 import ControlPanel from '../components/Controls/ControlPanel';
@@ -7,6 +7,7 @@ import ChooseModeGame from '../components/Notify/ChooseModeGame';
 import ChooseDifficultyGameForAI from '../components/Notify/ChooseDifficultyGameForAI';
 import ChoosePlayerColorGame from '../components/Notify/ChoosePlayerColorGame';
 import ChooseRestartNewGame from '../components/Notify/ChooseNewGame';
+import AxiosInstance from '../api/AxiosInstance';
 
 export type TYPES_COLOR = "red" | "blue";
 const difficulties = [
@@ -61,10 +62,33 @@ const Game: React.FC = () => {
         setOpenChoosePlayer(true);
     }
 
-    const handleChooseColor = (color: TYPES_COLOR) => {
+    const handleChooseColor = async (color: TYPES_COLOR) => {
         setPlayerColor(color)
         setOpenChoosePlayer(false)
         setIsGameStarted(true);
+
+        try {
+            const reponse = await AxiosInstance.post("/create_game", {
+                player1: {
+                    color: color,
+                    position: { x: BOARD_SIZE - 1, y: Math.floor(BOARD_SIZE / 2) },
+                    walls_left: 10,
+                },
+                player2: {
+                    color: color === "red" ? "blue" : "red",
+                    position: { x: 0, y: Math.floor(BOARD_SIZE / 2) },
+                    walls_left: 10,
+                },
+                board: {
+                    width: BOARD_SIZE,
+                    height: BOARD_SIZE,
+                }
+            });
+            console.log("Game created successfully:", reponse.data);
+        } catch (error) {
+            console.error("Error creating game:", error);
+        }
+
         navigate("/game");
     }
 

@@ -165,7 +165,7 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
                         height: "8px",
                         backgroundColor: "transparent",
                         "&:hover": {
-                            backgroundColor: "rgba(121, 85, 72, 0.3)",
+                            backgroundColor: "rgba(139, 191, 92, 0.5)",
                             cursor: "pointer"
                         },
                         pointerEvents: "auto",
@@ -183,7 +183,7 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
                         width: "8px",
                         backgroundColor: "transparent",
                         "&:hover": {
-                            backgroundColor: "rgba(121, 85, 72, 0.3)",
+                            backgroundColor: "rgba(139, 191, 92, 0.5)",
                             cursor: "pointer"
                         },
                         pointerEvents: "auto",

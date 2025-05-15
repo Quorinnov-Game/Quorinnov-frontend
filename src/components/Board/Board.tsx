@@ -211,8 +211,30 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
         }
     };
 
-    const handleValidateWall = () => {
+    const handleValidateWall = async () => {
         if (!temporaryWall) return;
+        // try {
+        //     const reponse = await AxiosInstance.post("/validate_wall", {
+        //         player_id: players.P1.id,
+        //         x: temporaryWall.position.x,
+        //         y: temporaryWall.position.y,
+        //         orientation: temporaryWall.orientation,
+        //     })
+        //     console.log("Wall validated successfully:", reponse.data);
+
+        //     setWalls(prev => [...prev, temporaryWall]);
+        //     setPlayers(prev => ({
+        //         ...prev,
+        //         P1: {
+        //             ...prev.P1,
+        //             wallsRemaining: prev.P1.wallsRemaining - 1
+        //         }
+        //     }));
+        //     setTemporaryWall(null);
+        // }
+        // catch (error) {
+        //     console.error("Error validating wall:", error);
+        // }
         setWalls(prev => [...prev, temporaryWall]);
         setPlayers(prev => ({
             ...prev,

@@ -1,7 +1,7 @@
 import { Box } from "@mui/material"
 import { Player } from "../../@types/player";
-import PlayerShow from "../Player/PlayerShow";
 import { BOARD_SIZE } from "./Board";
+import pandas from "../../assets/img/pandas.png";
 
 type SquareProps = {
     x: number,
@@ -69,8 +69,19 @@ const Square: React.FC<SquareProps> = ({ x, y, players, selectedPlayer, onSelect
                 zIndex: 1, // to make sure the square is on top of the wall, if zIndex of square is less than wall, cannot click on square
             }}
         >
-            {playerHere && (
-                <PlayerShow color={playerHere.color} id={playerHere.id} wallsRemaining={playerHere.wallsRemaining}/>
+            {players.P1.position.x === x && players.P1.position.y === y && (
+                <img
+                    src={pandas}
+                    alt="Player 1"
+                    style={{ width: '100%', height: '100%' }}
+                />
+            )}
+            {players.P2.position.x === x && players.P2.position.y === y && (
+                <img
+                    src={pandas}
+                    alt="Player 2"
+                    style={{ width: '100%', height: '100%' }}
+                />
             )}
         </Box>
     );

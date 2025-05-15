@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Square from './Square';
 import { Player } from '../../@types/player';
 import InfoPanel from '../Controls/InfoPanel';
-import { TYPES_COLOR } from '../../pages/Game';
+import { COLOR_P1, COLOR_P2, TYPES_COLOR } from '../../pages/Game';
 import VictoryOverlay from '../Effect/VictoryOverlay';
 import DefeatOverlay from '../Effect/DefeatOverlay';
 import { Wall } from '../../@types/game';
@@ -36,7 +36,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
         },
         P2: {
             id: 2,
-            color: playerColor === "red" ? "bleu" : "rouge",
+            color: playerColor === COLOR_P1 ? COLOR_P2 : COLOR_P1,
             name: NAME_PLAYER2,
             position: { x: 0, y: Math.floor(BOARD_SIZE / 2) },
             wallsRemaining: 10,
@@ -57,22 +57,12 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
 
         setPlayers({
             P1: {
-                id: 1,
+                ...initialPlayers.P1,
                 color: playerColor,
-                name: NAME_PLAYER1,
-                position: { x: BOARD_SIZE - 1, y: Math.floor(BOARD_SIZE / 2) },
-                wallsRemaining: 10,
-                isWinner: false,
-                isPlayer: true,
             },
             P2: {
-                id: 2,
-                color: playerColor === "red" ? "blue" : "red",
-                name: NAME_PLAYER2,
-                position: { x: 0, y: Math.floor(BOARD_SIZE / 2) },
-                wallsRemaining: 10,
-                isWinner: false,
-                isPlayer: true,
+                ...initialPlayers.P2,
+                color: playerColor === COLOR_P1 ? COLOR_P2 : COLOR_P1,
             }
         });
     }, [playerColor]);

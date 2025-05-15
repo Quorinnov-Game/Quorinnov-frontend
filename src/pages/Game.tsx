@@ -9,7 +9,10 @@ import ChoosePlayerColorGame from '../components/Notify/ChoosePlayerColorGame';
 import ChooseRestartNewGame from '../components/Notify/ChooseNewGame';
 import AxiosInstance from '../api/AxiosInstance';
 
-export type TYPES_COLOR = "red" | "blue";
+export const COLOR_P1 = "#f8bbd0";
+export const COLOR_P2 = "#77B5FE";
+export type TYPES_COLOR = typeof COLOR_P1 | typeof COLOR_P2;
+
 const difficulties = [
     { id: 1, name: "Débutant" },
     { id: 2, name: "Intermédiaire" },
@@ -23,7 +26,7 @@ const Game: React.FC = () => {
     const [openNewGame, setOpenNewGame] = useState(false);
     const [openDifficulty, setOpenDifficulty] = useState(false);
     const [openChoosePlayer, setOpenChoosePlayer] = useState(false);
-    const [playerColor, setPlayerColor] = useState<TYPES_COLOR>("red");
+    const [playerColor, setPlayerColor] = useState<TYPES_COLOR>(COLOR_P1);
     const [isGameStarted, setIsGameStarted] = useState(false);
     const [openModeGame, setOpenModeGame] = useState(true);
 
@@ -75,7 +78,7 @@ const Game: React.FC = () => {
                     walls_left: 10,
                 },
                 player2: {
-                    color: color === "red" ? "blue" : "red",
+                    color: color === COLOR_P1 ? COLOR_P2 : COLOR_P1,
                     position: { x: 0, y: Math.floor(BOARD_SIZE / 2) },
                     walls_left: 10,
                 },

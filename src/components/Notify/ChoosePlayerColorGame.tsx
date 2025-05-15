@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogActions, DialogTitle, Typography } from "@mui/material"
 import React from "react"
-import { TYPES_COLOR } from "../../pages/Game"
+import { COLOR_P1, COLOR_P2, TYPES_COLOR } from "../../pages/Game"
 
 type ChoosePlayerColorGameProps = {
     open: boolean,
@@ -26,10 +26,10 @@ const ChoosePlayerColorGame: React.FC<ChoosePlayerColorGameProps> = ({ open, onS
         >
             <DialogTitle id="alert-dialog-title-difficulty-game" >Choisissez la couleur de votre personnage préféré</DialogTitle>
             <DialogActions>
-                <Button onClick={() => onSelectColor("red")} color="error">
+                <Button onClick={() => onSelectColor(COLOR_P1)} color="error">
                     <Typography variant="h6" fontWeight="bold">Rouge</Typography>
                 </Button>
-                <Button onClick={() => onSelectColor("blue")} color="primary">
+                <Button onClick={() => onSelectColor(COLOR_P2)} color="primary">
                     <Typography variant="h6" fontWeight="bold">Bleu</Typography>
                 </Button>
                 <Button onClick={onCancelChooseColorPlayer} color="inherit">

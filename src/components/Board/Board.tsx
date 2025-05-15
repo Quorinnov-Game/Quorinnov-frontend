@@ -225,8 +225,9 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
                     padding: `${PADDING_BOARD}px`,
                     aspectRatio: "1/1",
                     backgroundColor: "#f0f0f0",
-                    border: "1px solid black",
+                    border: "1px solid #bdbdbd",
                     borderRadius: "8px",
+                    boxShadow: `5px 5px 10px rgb(9, 136, 92), -5px -5px 10px rgb(9, 136, 92)`,
                 }}
             >
                 {Array.from({ length: BOARD_SIZE }, (_, x) => (

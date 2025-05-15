@@ -104,7 +104,17 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
                 if (jumpX >= 0 && jumpX < BOARD_SIZE && jumpY >= 0 && jumpY < BOARD_SIZE) {
                     validMoves.push({ x: jumpX, y: jumpY });
                 }
-            } else {
+            }
+            else if (players.P1.position.x === nx && players.P1.position.y === ny) {
+                const jumpX = nx + dx;
+                const jumpY = ny + dy;
+
+                // Si après P1 il y a une case vide sur le plateau, sautez par-dessus.
+                if (jumpX >= 0 && jumpX < BOARD_SIZE && jumpY >= 0 && jumpY < BOARD_SIZE) {
+                    validMoves.push({ x: jumpX, y: jumpY });
+                }
+            }
+            else {
                 // Si c'est une cellule vide normale
                 validMoves.push({ x: nx, y: ny });
             }

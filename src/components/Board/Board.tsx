@@ -54,6 +54,11 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
     const [temporaryWall, setTemporaryWall] = useState<Wall | null>(null);
 
     useEffect(() => {
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            event.preventDefault();
+        }
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
         if (!playerColor) return;
 
         setPlayers({
@@ -66,6 +71,10 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
                 color: playerColor === COLOR_P1 ? COLOR_P2 : COLOR_P1,
             }
         });
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        }
     }, [playerColor]);
 
     const handleSelectPlayer = (player: Player) => {

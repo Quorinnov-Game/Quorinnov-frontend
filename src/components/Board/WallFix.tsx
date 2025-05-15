@@ -35,9 +35,16 @@ const WallFix: React.FC<WallFixProps> = ({ wall, isTemporary = false }) => {
                     : `${wall.position.x * cellSize}px`,
                 width: wall.orientation === HORIZONTAL ? `${GRID_SIZE * 2 + GAP_CELLULE}px` : `${PADDING_BOARD}px`,
                 height: wall.orientation === HORIZONTAL ? PADDING_BOARD : `${GRID_SIZE * 2 + GAP_CELLULE}px`,
-                backgroundColor: isTemporary ? "rgba(121, 85, 72, 0.5)" : "#795548",
                 borderRadius: "2px",
-                boxShadow: isTemporary ? "none" : "0 0 2px rgba(0,0,0,0.5)",
+                background: isTemporary ? "rgba(139, 191, 92, 0.8)" : wall.orientation === HORIZONTAL ? `
+                        linear-gradient(180deg, #a3d977 25%, #8bbf5c 25%, #8bbf5c 50%, #a3d977 50%, #a3d977 75%, #8bbf5c 75%, #8bbf5c 100%),
+                        linear-gradient(90deg, #8bbf5c 25%, #a3d977 25%, #a3d977 50%, #8bbf5c 50%, #8bbf5c 75%, #a3d977 75%, #a3d977 100%)
+                    `
+                    : `
+                        linear-gradient(90deg, #a3d977 25%, #8bbf5c 25%, #8bbf5c 50%, #a3d977 50%, #a3d977 75%, #8bbf5c 75%, #8bbf5c 100%),
+                        linear-gradient(180deg, #8bbf5c 25%, #a3d977 25%, #a3d977 50%, #8bbf5c 50%, #8bbf5c 75%, #a3d977 75%, #a3d977 100%)
+                    `,
+                // backgroundColor: isTemporary ? "rgba(139, 191, 92, 0.5)" : '#8bbf5c',
             }}
         />
     );

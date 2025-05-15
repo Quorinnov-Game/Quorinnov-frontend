@@ -20,8 +20,8 @@ const WallBar = ({ count }: { count: number }) => {
                     height: "18px",
                     borderRadius: "2px",
                     background: `
-                        repeating-linear-gradient(90deg, transparent, transparent 8px, #d8a08c 8px, #d8a08c 9px),
-                        repeating-linear-gradient(180deg, transparent, transparent 8px, #d8a08c 8px, #d8a08c 9px)
+                        linear-gradient(180deg, #a3d977 25%, #8bbf5c 25%, #8bbf5c 50%, #a3d977 50%, #a3d977 75%, #8bbf5c 75%, #8bbf5c 100%),
+                        linear-gradient(90deg, #8bbf5c 25%, #a3d977 25%, #a3d977 50%, #8bbf5c 50%, #8bbf5c 75%, #a3d977 75%, #a3d977 100%)
                     `,
                     backgroundColor: '#5c5244',
                     boxShadow: "0 0 2px rgba(0,0,0,0.5)",

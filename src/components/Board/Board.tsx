@@ -9,6 +9,7 @@ import DefeatOverlay from '../Effect/DefeatOverlay';
 import { Wall } from '../../@types/game';
 import WallPlacer from './WallPlacer';
 import WallFix from './WallFix';
+import AxiosInstance from '../../api/AxiosInstance';
 
 export const BOARD_SIZE = 9;
 export const GAP_CELLULE = 10;

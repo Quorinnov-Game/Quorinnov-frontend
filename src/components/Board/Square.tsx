@@ -34,13 +34,11 @@ const Square: React.FC<SquareProps> = ({ x, y, players, selectedPlayer, onSelect
     const isTopOrBotRow = x === 0 || x === BOARD_SIZE - 1;
 
     const onPlaceToDirection = () => {
-            // isYourPlayer && isYourTurn ?
-            //     onSelectPlayer(playerHere) : (selectedPlayer && isValidMove && onMovePlayer(x, y))
-            if (!!playerHere && isYourPlayer) {
-                onSelectPlayer(playerHere);
-            } else if (selectedPlayer && isValidMove) {
-                onMovePlayer(x, y);
-            }
+        if (!!playerHere && isYourPlayer) {
+            onSelectPlayer(playerHere);
+        } else if (selectedPlayer && isValidMove) {
+            onMovePlayer(x, y);
+        }
     }
     return (
         <Box
@@ -56,7 +54,7 @@ const Square: React.FC<SquareProps> = ({ x, y, players, selectedPlayer, onSelect
                     : isValidMove
                         ? "#FFF59D"
                         : isTopOrBotRow
-                            ? "#CCCCCC"
+                            ? "#c8e6c9"
                             : "white",
                 cursor: isYourPlayer || isValidMove ? "pointer" : "default",
                 boxShadow: isValidMove && !isYourPlayer
@@ -64,7 +62,7 @@ const Square: React.FC<SquareProps> = ({ x, y, players, selectedPlayer, onSelect
                     : "none",
                 transition: "all 0.2s",
                 "&:hover": isYourPlayer || isValidMove ? {
-                    backgroundColor: isValidMove ? "#FFEB3B" : "#f8bbd0"
+                    backgroundColor: "#FFEB3B"
                 } : {},
                 zIndex: 1, // to make sure the square is on top of the wall, if zIndex of square is less than wall, cannot click on square
             }}

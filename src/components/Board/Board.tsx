@@ -149,52 +149,66 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
         setTurn(prev => prev === "P1" ? "P2" : "P1")
     };
 
-    const handlePlaceWall = (wall: Wall) => {
-        if (wall.playerId !== players.P1.id) return;
+    const handlePlaceWall = async (wall: Wall) => {
+        // if (wall.playerId !== players.P1.id) return;
 
-        // Vérifiez si le mur est valide dans les limites du tableau
-        const isValidHorizontal = wall.position.x >= 0 && wall.position.x < BOARD_SIZE - 1 &&
-            wall.position.y > 0 && wall.position.y < BOARD_SIZE &&
-            wall.orientation === HORIZONTAL;
-        const isValidVertical = wall.position.x > 0 && wall.position.x < BOARD_SIZE &&
-            wall.position.y >= 0 && wall.position.y < BOARD_SIZE - 1 &&
-            wall.orientation === VERTICAL;
+        // // Vérifiez si le mur est valide dans les limites du tableau
+        // const isValidHorizontal = wall.position.x >= 0 && wall.position.x < BOARD_SIZE - 1 &&
+        //     wall.position.y > 0 && wall.position.y < BOARD_SIZE &&
+        //     wall.orientation === HORIZONTAL;
+        // const isValidVertical = wall.position.x > 0 && wall.position.x < BOARD_SIZE &&
+        //     wall.position.y >= 0 && wall.position.y < BOARD_SIZE - 1 &&
+        //     wall.orientation === VERTICAL;
 
-        // Vérifiez si le mur ne chevauche pas un autre mur
-        const isOverlappingWall = walls.some(
-            w => (
-                w.position.x === wall.position.x &&
-                w.position.y === wall.position.y &&
-                w.orientation === wall.orientation
-            )
-        );
+        // // Vérifiez si le mur ne chevauche pas un autre mur
+        // const isOverlappingWall = walls.some(
+        //     w => (
+        //         w.position.x === wall.position.x &&
+        //         w.position.y === wall.position.y &&
+        //         w.orientation === wall.orientation
+        //     )
+        // );
 
-        // Vérifiez si le mur croise un autre mur
-        const isCrossingWall = walls.some((w) => {
-            if (wall.orientation === HORIZONTAL && w.orientation === VERTICAL) {
-                // mur horizontal croise mur vertical
-                return (
-                    (wall.position.x === w.position.x - 1 &&
-                        wall.position.y === w.position.y + 1)
-                );
-            } else if (wall.orientation === VERTICAL && w.orientation === HORIZONTAL) {
-                // mur vertical croise mur horizontal
-                return (
-                    (wall.position.x === w.position.x + 1 &&
-                        wall.position.y === w.position.y - 1)
-                );
-            }
-            return false;
-        });
+        // // Vérifiez si le mur croise un autre mur
+        // const isCrossingWall = walls.some((w) => {
+        //     if (wall.orientation === HORIZONTAL && w.orientation === VERTICAL) {
+        //         // mur horizontal croise mur vertical
+        //         return (
+        //             (wall.position.x === w.position.x - 1 &&
+        //                 wall.position.y === w.position.y + 1)
+        //         );
+        //     } else if (wall.orientation === VERTICAL && w.orientation === HORIZONTAL) {
+        //         // mur vertical croise mur horizontal
+        //         return (
+        //             (wall.position.x === w.position.x + 1 &&
+        //                 wall.position.y === w.position.y - 1)
+        //         );
+        //     }
+        //     return false;
+        // });
 
-        const isValid = (isValidHorizontal || isValidVertical) &&
-            !isOverlappingWall &&
-            !isCrossingWall &&
-            players.P1.wallsRemaining > 0;
+        // const isValid = (isValidHorizontal || isValidVertical) &&
+        //     !isOverlappingWall &&
+        //     !isCrossingWall &&
+        //     players.P1.wallsRemaining > 0;
 
-        if (!isValid) return;
+        // if (!isValid) return;
 
-        setTemporaryWall(wall);
+        // setTemporaryWall(wall);
+
+        try {
+            const reponse = await AxiosInstance.post("/place_wall", {
+                player_id: players.P1.id,
+                x: wall.position.x,
+                y: wall.position.y,
+                orientation: wall.orientation,
+            })
+            setTemporaryWall(wall);
+            console.log("Wall placed successfully:", reponse.data);
+        }
+        catch (error) {
+            console.error("Error placing wall:", error);
+        }
     };
 
     const handleValidateWall = () => {

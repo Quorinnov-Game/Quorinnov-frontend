@@ -204,56 +204,39 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
 
         // if (!isValid) return;
 
-        // setTemporaryWall(wall);
-
-        try {
-            const reponse = await AxiosInstance.post("/place_wall", {
-                player_id: players.P1.id,
-                x: wall.position.x,
-                y: wall.position.y,
-                orientation: wall.orientation,
-            })
-            setTemporaryWall(wall);
-            console.log("Wall placed successfully:", reponse.data);
-        }
-        catch (error) {
-            console.error("Error placing wall:", error);
-        }
+        setTemporaryWall(wall);
     };
 
     const handleValidateWall = async () => {
         if (!temporaryWall) return;
-        // try {
-        //     const reponse = await AxiosInstance.post("/validate_wall", {
-        //         player_id: players.P1.id,
-        //         x: temporaryWall.position.x,
-        //         y: temporaryWall.position.y,
-        //         orientation: temporaryWall.orientation,
-        //     })
-        //     console.log("Wall validated successfully:", reponse.data);
+        try {
+            const reponse = await AxiosInstance.post("/place_wall", {
+                player_id: players.P2.id,
+                x: temporaryWall.position.x,
+                y: temporaryWall.position.y,
+                orientation: temporaryWall.orientation,
+                is_valid: true,
+            })
 
-        //     setWalls(prev => [...prev, temporaryWall]);
-        //     setPlayers(prev => ({
-        //         ...prev,
-        //         P1: {
-        //             ...prev.P1,
-        //             wallsRemaining: prev.P1.wallsRemaining - 1
-        //         }
-        //     }));
-        //     setTemporaryWall(null);
-        // }
-        // catch (error) {
-        //     console.error("Error validating wall:", error);
-        // }
-        setWalls(prev => [...prev, temporaryWall]);
-        setPlayers(prev => ({
-            ...prev,
-            P1: {
-                ...prev.P1,
-                wallsRemaining: prev.P1.wallsRemaining - 1
+            if (!reponse.data.success) {
+                alert("Invalid wall placement");
+                return;
             }
-        }));
-        setTemporaryWall(null);
+            else {
+                setWalls(prev => [...prev, temporaryWall]);
+                setPlayers(prev => ({
+                    ...prev,
+                    P1: {
+                        ...prev.P1,
+                        wallsRemaining: prev.P1.wallsRemaining - 1
+                    }
+                }));
+                setTemporaryWall(null);
+            }
+        }
+        catch (error) {
+            console.error("Error validating wall:", error);
+        }
     }
 
     const handleCancelWall = () => {

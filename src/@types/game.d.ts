@@ -7,6 +7,7 @@ export type Wall = {
     playerId: id;
     position: Position;
     orientation: Orientation;
+    isValid?: boolean | false;
 };
 
 export type Orientation = "horizontal" | "vertical";

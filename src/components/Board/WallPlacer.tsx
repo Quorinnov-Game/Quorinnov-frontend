@@ -43,7 +43,8 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
             existingWall.orientation === wall.orientation &&
             (wall.orientation === HORIZONTAL
                 ? (
-                    // Vérifiez si le mur horizontal est trop proche d'un autre mur horizontal                existingWall.position.x === wall.position.x &&
+                    // Vérifiez si le mur horizontal est trop proche d'un autre mur horizontal
+                    existingWall.position.x === wall.position.x &&
                     Math.abs(existingWall.position.y - wall.position.y) <= 1
                 )
                 : (

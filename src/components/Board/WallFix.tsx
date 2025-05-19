@@ -28,11 +28,11 @@ const WallFix: React.FC<WallFixProps> = ({ wall, isTemporary = false }) => {
             sx={{
                 position: "absolute",
                 top: wall.orientation === HORIZONTAL
-                    ? `${wall.position.x * cellSize}px`
+                    ? `${(wall.position.x + 1) * cellSize}px`
                     : `${wall.position.x * cellSize + PADDING_BOARD}px`, // Noted
                 left: wall.orientation === HORIZONTAL
                     ? `${wall.position.y * cellSize + PADDING_BOARD}px`
-                    : `${wall.position.y * cellSize}px`,
+                    : `${(wall.position.y + 1) * cellSize}px`,
                 width: wall.orientation === HORIZONTAL ? `${GRID_SIZE * 2 + GAP_CELLULE}px` : `${PADDING_BOARD}px`,
                 height: wall.orientation === HORIZONTAL ? PADDING_BOARD : `${GRID_SIZE * 2 + GAP_CELLULE}px`,
                 borderRadius: "2px",

@@ -28,71 +28,70 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
 
     const isWallCrossing = (wall: Wall) => {
         // Vérifiez si le mur croise un autre mur
-        return walls.some(existingWall => {
-            if (wall.orientation === HORIZONTAL && existingWall.orientation === VERTICAL) {
-                // Vérifiez si le mur horizontal croise un mur vertical
-                return (
-                    (wall.position.x === existingWall.position.x + 1 &&
-                        wall.position.y === existingWall.position.y - 1)
-                );
-            } else if (wall.orientation === VERTICAL && existingWall.orientation === HORIZONTAL) {
-                // Vérifiez si le mur vertical croise un mur horizontal
-                return (
-                    (wall.position.x === existingWall.position.x - 1 &&
-                        wall.position.y === existingWall.position.y + 1)
-                );
-            }
-            return false;
-        });
+        return walls.some(existingWall =>
+            (
+                wall.orientation !== existingWall.orientation &&
+                wall.position.x === existingWall.position.x &&
+                wall.position.y === existingWall.position.y
+            ) ? true : false
+        );
     }
 
     const isOverlappingWall = (wall: Wall) => {
-        // Vérifiez si le mur est trop proche d'un autre mur
-        return walls.some(existingWall => {
-            if (existingWall.orientation === wall.orientation) {
-                if (wall.orientation === HORIZONTAL) {
-                    // Vérifiez si le mur horizontal est trop proche d'un autre mur horizontal
-                    return (
-                        existingWall.position.x === wall.position.x &&
-                        Math.abs(existingWall.position.y - wall.position.y) <= 1
-                    );
-                } else if (wall.orientation === VERTICAL) {
+        // Vérifiez si le mur est adjacent ou superposé à un autre mur
+        return walls.some(existingWall =>
+            existingWall.orientation === wall.orientation &&
+            (wall.orientation === HORIZONTAL
+                ? (
+                    // Vérifiez si le mur horizontal est trop proche d'un autre mur horizontal                existingWall.position.x === wall.position.x &&
+                    Math.abs(existingWall.position.y - wall.position.y) <= 1
+                )
+                : (
                     // Vérifiez si le mur vertical est trop proche d'un autre mur vertical
-                    return (
-                        existingWall.position.y === wall.position.y &&
-                        Math.abs(existingWall.position.x - wall.position.x) <= 1
-                    );
-                }
-            }
-            return false;
-        }
+                    existingWall.position.y === wall.position.y &&
+                    Math.abs(existingWall.position.x - wall.position.x) <= 1
+                )
+            )
         );
     };
 
     const handleClickWall = (event: React.MouseEvent<HTMLDivElement>) => {
         const rect = event.currentTarget.getBoundingClientRect();
 
+        console.log("rect", rect);
+        console.log("eventX", event.clientX);
+        console.log("eventY", event.clientY);
         // Calculer la position de la souris par rapport à la grille
         const mouseX = event.clientX - rect.left;
+        console.log("mouseX", mouseX);
         const mouseY = event.clientY - rect.top;
-
-        // Les points (x,y)
-        const x = Math.floor(mouseY / cellSize);
-        const y = Math.floor(mouseX / cellSize);
+        console.log("mouseY", mouseY);
+        // Coordonnées x,y == (0,0) à partir du coin aigu supérieur gauche du tableau
+        const cellX = Math.floor(mouseY / cellSize);
+        const cellY = Math.floor(mouseX / cellSize);
 
         // Calculer le décalage pour vérifier l'espace entre 2 cellules
         const offsetX = mouseX % cellSize;
+        console.log("offsetX", offsetX);
         const offsetY = mouseY % cellSize;
+        console.log("offsetY", offsetY);
 
         // Condition de vérification de l'écart
-        const isInHorizontalGap = offsetY > 0 && offsetY < GAP_CELLULE / 2 && offsetX > 0 && offsetX < cellSize;
-        const isInVerticalGap = offsetX > 0 && offsetX < GAP_CELLULE / 2 && offsetY > 0 && offsetY < cellSize;
+        const isInHorizontalGap = offsetY > 0 && offsetY < GAP_CELLULE / 2;
+        const isInVerticalGap = offsetX > 0 && offsetX < GAP_CELLULE / 2;
+
+        // La coordonnée x doit être réduite d'une unité s'il s'agit d'un mur horizontal,
+        // la coordonnée y doit être réduite d'une unité s'il s'agit d'un mur vertical.
+        const x = cellX - (isInHorizontalGap ? 1 : 0);
+        console.log("x", x);
+        const y = cellY - (isInVerticalGap ? 1 : 0);
+        console.log("y", y);
 
         // Vérifiez si le mur est dans les limites de la grille
-        // Les murs horizontaux (1<=x<=8, 0<=y<=7)
-        // Les murs verticaux (0<=x<=7, 1<=y<=8)
-        const validHorizontal = isInHorizontalGap && x > 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE - 1;
-        const validVertical = isInVerticalGap && y > 0 && y < BOARD_SIZE && x >= 0 && x < BOARD_SIZE - 1;
+        // Les murs horizontaux (0<=x<=7, 0<=y<=7)
+        // Les murs verticaux (0<=x<=7, 0<=y<=7)
+        const validHorizontal = isInHorizontalGap && x >= 0 && x <= BOARD_SIZE - 2 && y >= 0 && y <= BOARD_SIZE - 2;
+        const validVertical = isInVerticalGap && y >= 0 && y <= BOARD_SIZE - 2 && x >= 0 && x <= BOARD_SIZE - 2;
 
         // Vérifiez si le mur est valide
         if (validHorizontal) {
@@ -151,7 +150,7 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
                 <Box
                     sx={{
                         position: "absolute",
-                        top: `${hoveredHorizontal.position.x * cellSize}px`,
+                        top: `${(hoveredHorizontal.position.x + 1) * cellSize}px`,
                         left: `${hoveredHorizontal.position.y * cellSize + 8}px`,
                         width: `${GRID_SIZE * 2 + GAP_CELLULE}px`,
                         height: "8px",
@@ -170,7 +169,7 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
                     sx={{
                         position: "absolute",
                         top: `${hoveredVertical.position.x * cellSize + 8}px`,
-                        left: `${hoveredVertical.position.y * cellSize}px`,
+                        left: `${(hoveredVertical.position.y + 1) * cellSize}px`,
                         height: `${GRID_SIZE * 2 + GAP_CELLULE}px`,
                         width: "8px",
                         backgroundColor: "transparent",

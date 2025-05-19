@@ -46,7 +46,7 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
         });
     }
 
-    const isWallTooClose = (wall: Wall) => {
+    const isOverlappingWall = (wall: Wall) => {
         // Vérifiez si le mur est trop proche d'un autre mur
         return walls.some(existingWall => {
             if (existingWall.orientation === wall.orientation) {
@@ -54,13 +54,13 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
                     // Vérifiez si le mur horizontal est trop proche d'un autre mur horizontal
                     return (
                         existingWall.position.x === wall.position.x &&
-                        Math.abs(existingWall.position.y - wall.position.y) === 1
+                        Math.abs(existingWall.position.y - wall.position.y) <= 1
                     );
                 } else if (wall.orientation === VERTICAL) {
                     // Vérifiez si le mur vertical est trop proche d'un autre mur vertical
                     return (
                         existingWall.position.y === wall.position.y &&
-                        Math.abs(existingWall.position.x - wall.position.x) === 1
+                        Math.abs(existingWall.position.x - wall.position.x) <= 1
                     );
                 }
             }
@@ -101,7 +101,7 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
                 orientation: HORIZONTAL,
                 playerId: playerId,
             };
-            if (!isWallTooClose(wallHorizontal) && !isWallCrossing(wallHorizontal)) {
+            if (!isOverlappingWall(wallHorizontal) && !isWallCrossing(wallHorizontal)) {
                 setHoveredHorizontal(wallHorizontal);
             } else {
                 setHoveredHorizontal(null);
@@ -112,7 +112,7 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
                 orientation: VERTICAL,
                 playerId: playerId,
             };
-            if (!isWallTooClose(wallVertical) && !isWallCrossing(wallVertical)) {
+            if (!isOverlappingWall(wallVertical) && !isWallCrossing(wallVertical)) {
                 setHoveredVertical(wallVertical);
             } else {
                 setHoveredVertical(null);

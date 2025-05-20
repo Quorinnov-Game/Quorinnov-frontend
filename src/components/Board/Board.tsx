@@ -91,14 +91,17 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
             return;
         };
 
-        if (players[turn].id === player.id) {
-            if (selectedPlayer && selectedPlayer.id === player.id) {
-                setSelectedPlayer(null);
-                setAtion(null);
-            } else {
-                setSelectedPlayer(player);
-                setAtion(ACTION_MOVE);
-            }
+        if (players[turn].id !== player.id) {
+            showMessage(`C'est le tour de ${players[turn].name}`);
+            return;
+        }
+
+        if (selectedPlayer && selectedPlayer.id === player.id) {
+            setSelectedPlayer(null);
+            setAtion(null);
+        } else {
+            setSelectedPlayer(player);
+            setAtion(ACTION_MOVE);
         }
     };
 
@@ -228,6 +231,11 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
             showMessage("Vous êtes en train de déplacer, impossible de placer un mur");
             return;
         };
+
+        if (players[turn].id !== wall.playerId) {
+            showMessage(`C'est le tour de ${players[turn].name}`);
+            return;
+        }
 
         const currentPlayer = players[turn];
         if (wall.playerId !== currentPlayer.id || currentPlayer.wallsRemaining <= 0) return;

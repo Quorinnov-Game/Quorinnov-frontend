@@ -1,4 +1,4 @@
-import { Box, useMediaQuery } from '@mui/material';
+import { Alert, Box, Snackbar, useMediaQuery } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import Square from './Square';
 import { Player } from '../../@types/player';
@@ -19,9 +19,14 @@ export const HORIZONTAL = "horizontal";
 export const VERTICAL = "vertical";
 export const NAME_PLAYER1 = "Player1";
 export const NAME_PLAYER2 = "Player2";
+export const ACTION_MOVE = "move";
+export const ACTION_PLACE_WALL = "placeWall";
+
 type BoardProps = {
     playerColor: TYPES_COLOR,
 }
+
+type ActionType = "move" | "placeWall" | null;
 
 const Board: React.FC<BoardProps> = ({ playerColor }) => {
     const isMobile = useMediaQuery('(max-width:600px)')
@@ -52,6 +57,9 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
     const [victory, setVictory] = useState(false);
     const [walls, setWalls] = useState<Wall[]>([]);
     const [temporaryWall, setTemporaryWall] = useState<Wall | null>(null);
+    const [action, setAtion] = useState<ActionType>(null);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [message, setMessage] = useState<string | null>(null);
 
     useEffect(() => {
         const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -78,11 +86,18 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
     }, [playerColor]);
 
     const handleSelectPlayer = (player: Player) => {
-        if (turn === (player.id === 1 ? "P1" : "P2")) {
+        if (action === ACTION_PLACE_WALL) {
+            showMessage("Vous êtes en train de placer un mur, impossible de déplacer");
+            return;
+        };
+
+        if (players[turn].id === player.id) {
             if (selectedPlayer && selectedPlayer.id === player.id) {
                 setSelectedPlayer(null);
+                setAtion(null);
             } else {
                 setSelectedPlayer(player);
+                setAtion(ACTION_MOVE);
             }
         }
     };
@@ -182,7 +197,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
     };
 
     const movePlayer = (x: number, y: number) => {
-        if (!selectedPlayer) return;
+        if (!selectedPlayer || action !== ACTION_MOVE) return;
         if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) return;
 
         const isLegalMove = getValidMoves().some(pos => pos.x === x && pos.y === y);
@@ -199,16 +214,21 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
 
         setPlayers(prev => ({
             ...prev,
-            [selectedPlayer.id === 1 ? "P1" : "P2"]: {
+            [turn]: {
                 ...selectedPlayer,
                 position: { x, y }
             }
         }));
         setSelectedPlayer(null);
-        setTurn(prev => prev === "P1" ? "P2" : "P1")
+        changeTurn();
     };
 
-    const handlePlaceWall = async (wall: Wall) => {
+    const handlePlaceWall = (wall: Wall) => {
+        if (action === ACTION_MOVE) {
+            showMessage("Vous êtes en train de déplacer, impossible de placer un mur");
+            return;
+        };
+
         const currentPlayer = players[turn];
         if (wall.playerId !== currentPlayer.id || currentPlayer.wallsRemaining <= 0) return;
 
@@ -255,10 +275,11 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
         // if (!isValid) return;
 
         setTemporaryWall(wall);
+        setAtion(ACTION_PLACE_WALL);
     };
 
     const handleValidateWall = async () => {
-        if (!temporaryWall) return;
+        if (!temporaryWall || action !== ACTION_PLACE_WALL) return;
         try {
             const reponse = await AxiosInstance.post("/place_wall", {
                 player_id: players[turn].id,
@@ -282,7 +303,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
                     }
                 }));
                 setTemporaryWall(null);
-                setTurn(prev => prev === "P1" ? "P2" : "P1");
+                changeTurn();
             }
         }
         catch (error) {
@@ -292,6 +313,17 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
 
     const handleCancelWall = () => {
         setTemporaryWall(null);
+        setAtion(null);
+    }
+
+    const changeTurn = () => {
+        setTurn(prev => prev === "P1" ? "P2" : "P1");
+        setAtion(null);
+    }
+
+    const showMessage = (message: string) => {
+        setMessage(message);
+        setOpenSnackbar(true);
     }
 
     return (
@@ -363,6 +395,25 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
                 onCancelWall={handleCancelWall}
                 showWallControls={!!temporaryWall}
             />
+
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={5000}
+                onClose={() => setOpenSnackbar(false)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            >
+                <Alert
+                    severity="warning"
+                    variant="filled"
+                    sx={{
+                        width: '100%',
+                        backgroundColor: '#af9d18',
+                        color: 'white'
+                    }}
+                >
+                    {message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

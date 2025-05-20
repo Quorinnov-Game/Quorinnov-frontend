@@ -6,7 +6,7 @@ import InfoPanel from '../Controls/InfoPanel';
 import { COLOR_P1, COLOR_P2, TYPES_COLOR } from '../../pages/Game';
 import VictoryOverlay from '../Effect/VictoryOverlay';
 import DefeatOverlay from '../Effect/DefeatOverlay';
-import { Wall } from '../../@types/game';
+import { Position, Wall } from '../../@types/game';
 import WallPlacer from './WallPlacer';
 import WallFix from './WallFix';
 import AxiosInstance from '../../api/AxiosInstance';
@@ -87,17 +87,47 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
         }
     };
 
+    const isPathBlockedByWall = (currentPos: Position, targetPos: Position): boolean => {
+        return walls.some(wall => {
+            // Di chuyển theo chiều dọc (x thay đổi, y không đổi)
+            if (currentPos.y === targetPos.y) {
+                const minX = Math.min(currentPos.x, targetPos.x);
+                if (wall.orientation === HORIZONTAL) {
+                    // Kiểm tra tường ngang
+                    return (
+                        wall.position.x === minX && // Tường ngang nằm giữa vị trí hiện tại và đích
+                        (wall.position.y === currentPos.y || wall.position.y + 1 === currentPos.y) // Tường có thể bắt đầu tại y hoặc kết thúc tại y+1
+                    );
+                }
+            }
+
+            // Di chuyển theo chiều ngang (y thay đổi, x không đổi)
+            if (currentPos.x === targetPos.x) {
+                const minY = Math.min(currentPos.y, targetPos.y);
+                if (wall.orientation === VERTICAL) {
+                    // Kiểm tra tường dọc
+                    return (
+                        wall.position.y === minY && // Tường dọc nằm giữa vị trí hiện tại và đích
+                        (wall.position.x === currentPos.x || wall.position.x + 1 === currentPos.x) // Tường có thể bắt đầu tại x hoặc kết thúc tại x+1
+                    );
+                }
+            }
+
+            return false;
+        });
+    };
+
     const getValidMoves = () => {
         if (!selectedPlayer) return [];
         const { x, y } = selectedPlayer.position;
         const directions = [
-            { dx: -1, dy: 0 },
-            { dx: 1, dy: 0 },
-            { dx: 0, dy: -1 },
-            { dx: 0, dy: 1 },
+            { dx: -1, dy: 0 }, // Haut
+            { dx: 1, dy: 0 }, // Bas
+            { dx: 0, dy: -1 }, // Gauche
+            { dx: 0, dy: 1 }, // Droite
         ];
 
-        const validMoves: { x: number, y: number }[] = [];
+        const validMoves: Position[] = [];
         for (const { dx, dy } of directions) {
             const nx = x + dx;
             const ny = y + dy;
@@ -105,27 +135,46 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
             // Si ce n'est pas sur le tableau, sautez-le
             if (nx < 0 || nx >= BOARD_SIZE || ny < 0 || ny >= BOARD_SIZE) continue;
 
-            // Vérifier si la cellule a un adversaire
-            if (players.P2.position.x === nx && players.P2.position.y === ny) {
+            // Vérifier si le chemin est bloqué par un mur
+            if (isPathBlockedByWall(selectedPlayer.position, { x: nx, y: ny })) continue;
+
+            const otherPlayer = Object.values(players).find(
+                p => p.position.x === nx && p.position.y === ny
+            );
+
+            if (otherPlayer) {
                 const jumpX = nx + dx;
                 const jumpY = ny + dy;
 
-                // Si après P2 il y a une case vide sur le plateau, sautez par-dessus.
-                if (jumpX >= 0 && jumpX < BOARD_SIZE && jumpY >= 0 && jumpY < BOARD_SIZE) {
+                // TH1: Có thể nhảy qua thẳng
+                if (
+                    jumpX >= 0 && jumpX < BOARD_SIZE &&
+                    jumpY >= 0 && jumpY < BOARD_SIZE &&
+                    !isPathBlockedByWall({ x: nx, y: ny }, { x: jumpX, y: jumpY }) &&
+                    !Object.values(players).some(p => p.position.x === jumpX && p.position.y === jumpY)
+                ) {
                     validMoves.push({ x: jumpX, y: jumpY });
-                }
-            }
-            else if (players.P1.position.x === nx && players.P1.position.y === ny) {
-                const jumpX = nx + dx;
-                const jumpY = ny + dy;
+                } else {
+                    // TH2: Không thể nhảy thẳng qua do bị tường, cho phép nhảy chéo
+                    const isVertical = dx !== 0;
+                    const sideDirs = isVertical
+                        ? [{ dx: 0, dy: -1 }, { dx: 0, dy: 1 }]  // nếu đối thủ đứng trên/dưới
+                        : [{ dx: -1, dy: 0 }, { dx: 1, dy: 0 }]; // nếu đối thủ đứng trái/phải
 
-                // Si après P1 il y a une case vide sur le plateau, sautez par-dessus.
-                if (jumpX >= 0 && jumpX < BOARD_SIZE && jumpY >= 0 && jumpY < BOARD_SIZE) {
-                    validMoves.push({ x: jumpX, y: jumpY });
+                    for (const side of sideDirs) {
+                        const sideX = nx + side.dx;
+                        const sideY = ny + side.dy;
+                        if (
+                            sideX >= 0 && sideX < BOARD_SIZE &&
+                            sideY >= 0 && sideY < BOARD_SIZE &&
+                            !isPathBlockedByWall({ x: nx, y: ny }, { x: sideX, y: sideY }) &&
+                            !Object.values(players).some(p => p.position.x === sideX && p.position.y === sideY)
+                        ) {
+                            validMoves.push({ x: sideX, y: sideY });
+                        }
+                    }
                 }
-            }
-            else {
-                // Si c'est une cellule vide normale
+            } else {
                 validMoves.push({ x: nx, y: ny });
             }
         }

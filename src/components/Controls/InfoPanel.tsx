@@ -2,6 +2,7 @@ import { Box, Typography, Divider, Stack, Tooltip, IconButton } from "@mui/mater
 import { Player } from "../../@types/player";
 import { CheckBox, CloseOutlined } from "@mui/icons-material";
 import { NAME_PLAYER1, NAME_PLAYER2 } from "../Board/Board";
+import TurnDisplay from "../../config/TurnDisplay";
 
 type InfoPanelProps = {
     players: { P1: Player; P2: Player };
@@ -64,9 +65,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ players, turn, onValidateWall, on
             <Divider sx={{ width: "100%", mb: 1 }} />
 
             {/* Turn */}
-            <Typography variant="subtitle1" color="primary" fontWeight="bold">
-                {`Tour du ${players[turn].name}`}
-            </Typography>
+            <TurnDisplay players={players} turn={turn} />
 
             {/* --- WALL BUTTONS --- */}
 

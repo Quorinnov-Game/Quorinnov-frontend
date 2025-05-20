@@ -209,7 +209,8 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
     };
 
     const handlePlaceWall = async (wall: Wall) => {
-        // if (wall.playerId !== players.P1.id) return;
+        const currentPlayer = players[turn];
+        if (wall.playerId !== currentPlayer.id || currentPlayer.wallsRemaining <= 0) return;
 
         // // Vérifiez si le mur est valide dans les limites du tableau
         // const isValidHorizontal = wall.position.x >= 0 && wall.position.x < BOARD_SIZE - 1 &&
@@ -260,7 +261,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
         if (!temporaryWall) return;
         try {
             const reponse = await AxiosInstance.post("/place_wall", {
-                player_id: players.P2.id,
+                player_id: players[turn].id,
                 x: temporaryWall.position.x,
                 y: temporaryWall.position.y,
                 orientation: temporaryWall.orientation,
@@ -275,12 +276,13 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
                 setWalls(prev => [...prev, temporaryWall]);
                 setPlayers(prev => ({
                     ...prev,
-                    P1: {
-                        ...prev.P1,
-                        wallsRemaining: prev.P1.wallsRemaining - 1
+                    [turn]: {
+                        ...prev[turn],
+                        wallsRemaining: prev[turn].wallsRemaining - 1
                     }
                 }));
                 setTemporaryWall(null);
+                setTurn(prev => prev === "P1" ? "P2" : "P1");
             }
         }
         catch (error) {
@@ -345,7 +347,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
                     />
                 )}
                 <WallPlacer
-                    playerId={players.P1.id}
+                    playerId={players[turn].id}
                     onPlaceWall={handlePlaceWall}
                     walls={walls}
                 />

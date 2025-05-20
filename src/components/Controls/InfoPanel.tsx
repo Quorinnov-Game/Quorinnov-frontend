@@ -65,13 +65,13 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ players, turn, onValidateWall, on
 
             {/* Turn */}
             <Typography variant="subtitle1" color="primary" fontWeight="bold">
-                {turn === "P1" ? `Tour du ${NAME_PLAYER1}` : `Tour du ${NAME_PLAYER2}`}
+                {`Tour du ${players[turn].name}`}
             </Typography>
 
             {/* --- WALL BUTTONS --- */}
 
             {
-                turn === "P1" && showWallControls &&
+                showWallControls &&
                 <Stack direction="row" justifyContent="center" spacing={2}>
                     <Tooltip title="Validate">
                         <IconButton color="success" onClick={onValidateWall}>

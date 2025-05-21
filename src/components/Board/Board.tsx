@@ -199,7 +199,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
         return validMoves;
     };
 
-    const movePlayer = (x: number, y: number) => {
+    const movePlayer = async (x: number, y: number) => {
         if (!selectedPlayer || action !== ACTION_MOVE) return;
         if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) return;
 
@@ -215,15 +215,26 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
             players.P2.isWinner = true;
         }
 
-        setPlayers(prev => ({
-            ...prev,
-            [turn]: {
-                ...selectedPlayer,
-                position: { x, y }
-            }
-        }));
-        setSelectedPlayer(null);
-        changeTurn();
+        try {
+            const reponse = await AxiosInstance.post("/move", {
+                player_id: players[turn].id,
+                x: x,
+                y: y,
+            })
+            console.log("Move response:", reponse.data);
+            setPlayers(prev => ({
+                ...prev,
+                [turn]: {
+                    ...selectedPlayer,
+                    position: { x, y }
+                }
+            }));
+            setSelectedPlayer(null);
+            changeTurn();
+        }
+        catch (error) {
+            console.error("Error validating wall:", error);
+        }
     };
 
     const handlePlaceWall = (wall: Wall) => {

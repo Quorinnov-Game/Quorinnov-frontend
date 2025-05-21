@@ -10,6 +10,8 @@ import { Position, Wall } from '../../@types/game';
 import WallPlacer from './WallPlacer';
 import WallFix from './WallFix';
 import AxiosInstance from '../../api/AxiosInstance';
+import { useSound } from '../../hooks/useSound';
+import { SOUND_KEYS } from '../../constants/sound';
 
 export const BOARD_SIZE = 9;
 export const GAP_CELLULE = 10;
@@ -29,6 +31,7 @@ type BoardProps = {
 type ActionType = "move" | "placeWall" | null;
 
 const Board: React.FC<BoardProps> = ({ playerColor }) => {
+    const { play } = useSound();
     const isMobile = useMediaQuery('(max-width:600px)')
     const initialPlayers = {
         P1: {
@@ -230,6 +233,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
                 }
             }));
             setSelectedPlayer(null);
+            play(SOUND_KEYS.MOVE);
             changeTurn();
         }
         catch (error) {
@@ -295,6 +299,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
 
         setTemporaryWall(wall);
         setAtion(ACTION_PLACE_WALL);
+        play(SOUND_KEYS.PLACE_WALL);
     };
 
     const handleValidateWall = async () => {

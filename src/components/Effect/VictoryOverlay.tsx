@@ -5,6 +5,8 @@ import { useCallback, useEffect, useState } from "react";
 import { loadFireworksPreset } from "tsparticles-preset-fireworks";
 import { Player } from "../../@types/player";
 import { NAME_PLAYER1, NAME_PLAYER2 } from "../Board/Board";
+import { useSound } from "../../hooks/useSound";
+import { SOUND_KEYS } from "../../constants/sound";
 
 type VictoryOverlayProps = {
     players: {P1: Player, P2: Player};
@@ -12,8 +14,11 @@ type VictoryOverlayProps = {
 
 const VictoryOverlay: React.FC<VictoryOverlayProps> = ({ players }) => {
     const [showFireworks, setShowFireworks] = useState(true);
+    const { play } = useSound();
 
     useEffect(() => {
+        play(SOUND_KEYS.VICTORY);
+        
         const timer = setTimeout(() => {
             setShowFireworks(false);
         }, 3000); // 30 seconds

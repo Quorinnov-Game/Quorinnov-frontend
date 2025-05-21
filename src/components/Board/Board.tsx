@@ -29,6 +29,10 @@ type BoardProps = {
 }
 
 type ActionType = "move" | "placeWall" | null;
+type MessageState = {
+    text: string | null;
+    type: "error" | "warning";
+}
 
 const Board: React.FC<BoardProps> = ({ playerColor }) => {
     const { play } = useSound();
@@ -62,7 +66,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
     const [temporaryWall, setTemporaryWall] = useState<Wall | null>(null);
     const [action, setAtion] = useState<ActionType>(null);
     const [openSnackbar, setOpenSnackbar] = useState(false);
-    const [message, setMessage] = useState<string | null>(null);
+    const [message, setMessage] = useState<MessageState>({ text: null, type: "warning" });
 
     useEffect(() => {
         const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -253,7 +257,10 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
         }
 
         const currentPlayer = players[turn];
-        if (wall.playerId !== currentPlayer.id || currentPlayer.wallsRemaining <= 0) return;
+        if (wall.playerId !== currentPlayer.id || currentPlayer.wallsRemaining <= 0) {
+            showError("Vous n'avez plus de murs à placer !");
+            return;
+        }
 
         // // Vérifiez si le mur est valide dans les limites du tableau
         // const isValidHorizontal = wall.position.x >= 0 && wall.position.x < BOARD_SIZE - 1 &&
@@ -314,11 +321,12 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
             })
 
             if (!reponse.data.success) {
-                alert("Invalid wall placement");
+                showError("Invalide de mur!");
                 return;
             }
             else {
                 setWalls(prev => [...prev, temporaryWall]);
+                play(SOUND_KEYS.CORRECT);
                 setPlayers(prev => ({
                     ...prev,
                     [turn]: {
@@ -345,9 +353,16 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
         setAtion(null);
     }
 
-    const showMessage = (message: string) => {
-        setMessage(message);
+    const showMessage = (text: string) => {
+        setMessage({ text, type: "warning" });
         setOpenSnackbar(true);
+        play(SOUND_KEYS.MESSAGE);
+    }
+
+    const showError = (text: string) => {
+        setMessage({ text, type: "error" });
+        setOpenSnackbar(true);
+        play(SOUND_KEYS.ERROR);
     }
 
     return (
@@ -427,15 +442,15 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
             >
                 <Alert
-                    severity="warning"
+                    severity={message.type}
                     variant="filled"
                     sx={{
                         width: '100%',
-                        backgroundColor: '#af9d18',
+                        backgroundColor: message.type === "warning" ? '#af9d18': '#d32f2f',
                         color: 'white'
                     }}
                 >
-                    {message}
+                    {message.text}
                 </Alert>
             </Snackbar>
         </Box>

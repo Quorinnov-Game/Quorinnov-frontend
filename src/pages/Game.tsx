@@ -29,6 +29,7 @@ const Game: React.FC = () => {
     const [playerColor, setPlayerColor] = useState<TYPES_COLOR>(COLOR_P1);
     const [isGameStarted, setIsGameStarted] = useState(false);
     const [openModeGame, setOpenModeGame] = useState(true);
+    const [gameId, setGameId] = useState(null);
 
     const handleNewGame = () => {
         setOpenNewGame(false);
@@ -87,6 +88,7 @@ const Game: React.FC = () => {
                     height: BOARD_SIZE,
                 }
             });
+            setGameId(reponse.data.board_id);
             console.log("Game created successfully:", reponse.data);
         } catch (error) {
             console.error("Error creating game:", error);
@@ -156,7 +158,11 @@ const Game: React.FC = () => {
                             onCancelChooseColorPlayer={handleCancelChooseColorPlayer}
                         />
 
-                        <Board playerColor={playerColor} />
+                        <Board 
+                            key={gameId}
+                            playerColor={playerColor}
+                            gameId={gameId}
+                        />
                     </Box>
                 </div>
             }

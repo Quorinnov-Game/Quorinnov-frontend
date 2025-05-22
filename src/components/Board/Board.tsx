@@ -26,6 +26,7 @@ export const ACTION_PLACE_WALL = "placeWall";
 
 type BoardProps = {
     playerColor: TYPES_COLOR,
+    gameId: number | null,
 }
 
 type ActionType = "move" | "placeWall" | null;
@@ -34,7 +35,7 @@ type MessageState = {
     type: "error" | "warning";
 }
 
-const Board: React.FC<BoardProps> = ({ playerColor }) => {
+const Board: React.FC<BoardProps> = ({ playerColor, gameId }) => {
     const { play } = useSound();
     const isMobile = useMediaQuery('(max-width:600px)')
     const initialPlayers = {
@@ -69,6 +70,19 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
     const [message, setMessage] = useState<MessageState>({ text: null, type: "warning" });
 
     useEffect(() => {
+        if (gameId) {
+            console.log("Game ID:", gameId);
+            setPlayers(initialPlayers);
+            setSelectedPlayer(null);
+            setTurn("P1");
+            setVictory(false);
+            setWalls([]);
+            setTemporaryWall(null);
+            setAtion(null);
+            setOpenSnackbar(false);
+            setMessage({ text: null, type: "warning" });
+        }
+
         const handleBeforeUnload = (event: BeforeUnloadEvent) => {
             event.preventDefault();
         }
@@ -90,7 +104,7 @@ const Board: React.FC<BoardProps> = ({ playerColor }) => {
         return () => {
             window.removeEventListener("beforeunload", handleBeforeUnload);
         }
-    }, [playerColor]);
+    }, [playerColor, gameId]);
 
     const handleSelectPlayer = (player: Player) => {
         if (action === ACTION_PLACE_WALL) {

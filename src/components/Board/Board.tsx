@@ -442,10 +442,25 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
                     margin: "auto",
                     padding: `${PADDING_BOARD}px`,
                     aspectRatio: "1/1",
-                    backgroundColor: "#f0f0f0",
-                    border: "1px solid #bdbdbd",
+                    backgroundColor: "transparent",
+                    border: "1px solid rgba(255, 255, 255, 0.2)",
                     borderRadius: "8px",
-                    boxShadow: `5px 5px 10px rgb(9, 136, 92), -5px -5px 10px rgb(9, 136, 92)`,
+                    background: `
+                        radial-gradient(at 40% 20%, hsla(28,100%,74%,0.3) 0px, transparent 50%),
+                        radial-gradient(at 80% 0%, hsla(189,100%,56%,0.3) 0px, transparent 50%),
+                        radial-gradient(at 0% 50%, hsla(355,100%,93%,0.3) 0px, transparent 50%),
+                        radial-gradient(at 80% 50%, hsla(340,100%,76%,0.3) 0px, transparent 50%),
+                        radial-gradient(at 0% 100%, hsla(22,100%,77%,0.3) 0px, transparent 50%),
+                        radial-gradient(at 80% 100%, hsla(242,100%,70%,0.3) 0px, transparent 50%),
+                        radial-gradient(at 0% 0%, hsla(343,100%,76%,0.3) 0px, transparent 50%)
+                    `,
+                    animation: "boardGradient 15s ease infinite",
+                    boxShadow: `
+                        0 0 15px rgba(255, 255, 255, 0.1),
+                        inset 0 0 15px rgba(255, 255, 255, 0.1)
+                    `,
+                    backdropFilter: "blur(10px)",
+                    zIndex: 0,
                 }}
             >
                 {Array.from({ length: BOARD_SIZE }, (_, x) => (

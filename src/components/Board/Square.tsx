@@ -54,25 +54,29 @@ const Square: React.FC<SquareProps> = ({
                 width: "100%",
                 height: "100%",
                 aspectRatio: "1/1",
-                border: "1px solid black",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
                 borderRadius: "4px",
                 backgroundColor: isYourPlayer
-                    ? playerHere?.color
+                    ? `${playerHere?.color}CC`
                     : isValidMove
-                    ? "#FFF59D"
-                    : isTopOrBotRow
-                    ? "#c8e6c9"
-                    : "white",
+                        ? "rgba(255, 255, 0, 0.3)" // Màu vàng sáng hơn cho các nước đi hợp lệ
+                        : isTopOrBotRow
+                            ? "rgba(200, 230, 201, 0.4)"
+                            : "rgba(255, 255, 255, 0.1)",
                 cursor: isYourPlayer || isValidMove ? "pointer" : "default",
-                boxShadow:
-                    isValidMove && !isYourPlayer ? "0 0 8px #FFF59D" : "none",
-                transition: "all 0.2s",
-                "&:hover":
-                    isYourPlayer || isValidMove
-                        ? {
-                              backgroundColor: "#FFEB3B",
-                          }
-                        : {},
+                boxShadow: isValidMove && !isYourPlayer
+                    ? "0 0 12px rgba(255, 255, 0, 0.5)" // Tăng độ sáng của glow effect
+                    : "0 0 5px rgba(255, 255, 255, 0.1)",
+                transition: "all 0.3s ease",
+                "&:hover": isYourPlayer || isValidMove
+                    ? {
+                        backgroundColor: "rgba(255, 255, 0, 0.5)", // Màu vàng sáng hơn khi hover
+                        transform: "translateY(-2px)",
+                        boxShadow: "0 5px 15px rgba(255, 255, 0, 0.6)", // Tăng độ sáng của shadow
+                        zIndex: 2,
+                    }
+                    : {},
+                backdropFilter: "blur(5px)",
                 zIndex: 1,
                 display: "flex",
                 justifyContent: "center",

@@ -1,5 +1,4 @@
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
-import { TurnHistory } from "../../@types/game";
 
 type TurnHistorySelectProps = {
     totalTurns: number;
@@ -17,8 +16,10 @@ const TurnHistorySelect: React.FC<TurnHistorySelectProps> = ({ totalTurns, onSel
             <Select
                 label="History"
                 onChange={handleChange}
-                sx={{ color: "Scrollbar"}}
-                // defaultValue=""
+                sx={{ 
+                    color: "Scrollbar",
+                    backgroundColor: "lightgoldenrodyellow",
+                }}
             >
                 {[...Array(totalTurns)].map((_, index) => {
                     const turnNumber = totalTurns - index;

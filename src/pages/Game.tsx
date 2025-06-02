@@ -18,11 +18,10 @@ const difficulties = [
     { id: 2, name: "Intermédiaire" },
     { id: 3, name: "Avancé" },
     { id: 4, name: "Master" },
-]
+];
 
 const Game: React.FC = () => {
     const navigate = useNavigate();
-    const listsDifficulty = difficulties;
     const [openNewGame, setOpenNewGame] = useState(false);
     const [openDifficulty, setOpenDifficulty] = useState(false);
     const [openChoosePlayer, setOpenChoosePlayer] = useState(false);
@@ -31,48 +30,53 @@ const Game: React.FC = () => {
     const [openModeGame, setOpenModeGame] = useState(true);
     const [gameId, setGameId] = useState(null);
 
+    const [isVsAI, setIsVsAI] = useState(false);
+    const [aiDifficulty, setAiDifficulty] = useState<number | null>(null);
+
     const handleNewGame = () => {
         setOpenNewGame(false);
         setOpenModeGame(true);
-    }
+    };
 
     const handleResumeGame = () => {
         setOpenNewGame(false);
         navigate("/game");
-    }
+    };
 
     const handleCancelGame = () => {
         setOpenNewGame(true);
         setOpenModeGame(false);
-    }
+    };
 
     const handleCancelChooseColorPlayer = () => {
         setOpenChoosePlayer(false);
         setOpenModeGame(true);
-    }
+    };
 
     const handleCancelChooseDifficulty = () => {
         setOpenDifficulty(false);
         setOpenModeGame(true);
-    }
+    };
 
     const handleModeGame = (m: string) => {
+        setIsVsAI(m === "AI");
         setOpenModeGame(false);
-        m === "AI" ? setOpenDifficulty(true) : setOpenChoosePlayer(true)
-    }
+        m === "AI" ? setOpenDifficulty(true) : setOpenChoosePlayer(true);
+    };
 
-    const handleSelectDifficulty = () => {
+    const handleSelectDifficulty = (difficultyId: number) => {
+        setAiDifficulty(difficultyId);
         setOpenDifficulty(false);
         setOpenChoosePlayer(true);
-    }
+    };
 
     const handleChooseColor = async (color: TYPES_COLOR) => {
-        setPlayerColor(color)
-        setOpenChoosePlayer(false)
+        setPlayerColor(color);
+        setOpenChoosePlayer(false);
         setIsGameStarted(true);
 
         try {
-            const reponse = await AxiosInstance.post("/create_game", {
+            const response = await AxiosInstance.post("/create_game", {
                 player1: {
                     color: color,
                     position: { x: BOARD_SIZE - 1, y: Math.floor(BOARD_SIZE / 2) },
@@ -88,14 +92,14 @@ const Game: React.FC = () => {
                     height: BOARD_SIZE,
                 }
             });
-            setGameId(reponse.data.board_id);
-            console.log("Game created successfully:", reponse.data);
+            setGameId(response.data.board_id);
+            console.log("Game created successfully:", response.data);
         } catch (error) {
             console.error("Error creating game:", error);
         }
 
         navigate("/game");
-    }
+    };
 
     return (
         <div>
@@ -103,14 +107,14 @@ const Game: React.FC = () => {
                 open={openModeGame}
                 setOpenModeGame={setOpenModeGame}
                 onSelectMode={handleModeGame}
-                onCancelGame={() => navigate("/")} // Back to home
+                onCancelGame={() => navigate("/")}
             />
 
             <ChooseDifficultyGameForAI
                 open={openDifficulty}
                 setOpenDifficulty={setOpenDifficulty}
                 onSelectDifficulty={handleSelectDifficulty}
-                listDifficulty={listsDifficulty}
+                listDifficulty={difficulties}
                 onCancelChooseDifficulty={handleCancelChooseDifficulty}
             />
 
@@ -121,13 +125,10 @@ const Game: React.FC = () => {
                 onCancelChooseColorPlayer={handleCancelChooseColorPlayer}
             />
 
-            {
-                isGameStarted &&
+            {isGameStarted && (
                 <div>
                     <Box display="flex" flexDirection="column">
-                        <ControlPanel
-                            onNewGame={() => setOpenNewGame(true)}
-                        />
+                        <ControlPanel onNewGame={() => setOpenNewGame(true)} />
 
                         <ChooseRestartNewGame
                             open={openNewGame}
@@ -147,7 +148,7 @@ const Game: React.FC = () => {
                             open={openDifficulty}
                             setOpenDifficulty={setOpenDifficulty}
                             onSelectDifficulty={handleSelectDifficulty}
-                            listDifficulty={listsDifficulty}
+                            listDifficulty={difficulties}
                             onCancelChooseDifficulty={handleCancelChooseDifficulty}
                         />
 
@@ -158,16 +159,18 @@ const Game: React.FC = () => {
                             onCancelChooseColorPlayer={handleCancelChooseColorPlayer}
                         />
 
-                        <Board 
+                        <Board
                             key={gameId}
                             playerColor={playerColor}
                             gameId={gameId}
+                            isVsAI={isVsAI}
+                            aiDifficulty={aiDifficulty}
                         />
                     </Box>
                 </div>
-            }
+            )}
         </div>
     );
-}
+};
 
 export default Game;

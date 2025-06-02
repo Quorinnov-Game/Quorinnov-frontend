@@ -3,7 +3,7 @@ import React from "react"
 
 type ChooseDifficultyGameForAIProps = {
     open: boolean,
-    onSelectDifficulty: () => void,
+    onSelectDifficulty: (difficultyId: number) => void;
     setOpenDifficulty: (open: boolean) => void,
     listDifficulty: { id: number, name: string}[],
     onCancelChooseDifficulty?: () => void,
@@ -27,7 +27,8 @@ const ChooseDifficultyGameForAI: React.FC<ChooseDifficultyGameForAIProps> = ({ o
             <DialogTitle id="alert-dialog-title-difficulty-game" sx={{ justifyContent: "space-between" }}>Choisissez le niveau de difficulté de l'IA que vous voulez.</DialogTitle>
             <DialogActions>
                 {listDifficulty.map((difficulty) => (
-                    <Button key={difficulty.id} onClick={onSelectDifficulty} color="primary">
+                    <Button key={difficulty.id} onClick={() => onSelectDifficulty(difficulty.id)} color="primary">
+
                         <Typography variant="h6" fontWeight="bold">{difficulty.name}</Typography>
                     </Button>
                 ))}

@@ -1,4 +1,4 @@
-import soundPlaceWall from '../assets/sounds/placeWallClick.wav';
+import soundPlaceWall from '../assets/sounds/PlaceWallClick.wav';
 import soundMove from '../assets/sounds/MoveSound.wav';
 import soundError from '../assets/sounds/errorSound.wav';
 import soundNotification from '../assets/sounds/notificationSound.wav';

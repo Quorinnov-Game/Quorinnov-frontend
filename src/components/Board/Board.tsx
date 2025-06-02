@@ -25,6 +25,9 @@ export const ACTION_MOVE = "move";
 export const ACTION_PLACE_WALL = "placeWall";
 
 type BoardProps = {
+    isVsAI: boolean; 
+    aiDifficulty: number | null;
+  onPlayerMove?: (moveData: any) => void;
     playerColor: TYPES_COLOR,
     gameId: number | null,
 }
@@ -33,9 +36,11 @@ type ActionType = "move" | "placeWall" | null;
 type MessageState = {
     text: string | null;
     type: "error" | "warning";
+    isVsAI?: boolean;
 }
 
-const Board: React.FC<BoardProps> = ({ playerColor, gameId }) => {
+const Board: React.FC<BoardProps> = ({ playerColor, gameId, isVsAI, onPlayerMove, aiDifficulty}) => {
+    
     const { play } = useSound();
     const isMobile = useMediaQuery('(max-width:600px)')
     const initialPlayers = {
@@ -69,42 +74,55 @@ const Board: React.FC<BoardProps> = ({ playerColor, gameId }) => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [message, setMessage] = useState<MessageState>({ text: null, type: "warning" });
 
-    useEffect(() => {
-        if (gameId) {
-            console.log("Game ID:", gameId);
-            setPlayers(initialPlayers);
-            setSelectedPlayer(null);
-            setTurn("P1");
-            setVictory(false);
-            setWalls([]);
-            setTemporaryWall(null);
-            setAtion(null);
-            setOpenSnackbar(false);
-            setMessage({ text: null, type: "warning" });
-        }
+    // ... tout le code inchangé au-dessus
 
-        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-            event.preventDefault();
-        }
-        window.addEventListener("beforeunload", handleBeforeUnload);
+// Modifiez le useEffect de l'IA comme suit :
+useEffect(() => {
+    if (!isVsAI || victory || turn !== "P2") return;
 
-        if (!playerColor) return;
+    const makeAIMove = async () => {
+        try {
+            const response = await AxiosInstance.post("/ia_play", {
+                player_id: players.P2.id,
+                game_id: gameId,
+                difficulty: aiDifficulty
+            });
 
-        setPlayers({
-            P1: {
-                ...initialPlayers.P1,
-                color: playerColor,
-            },
-            P2: {
-                ...initialPlayers.P2,
-                color: playerColor === COLOR_P1 ? COLOR_P2 : COLOR_P1,
+            if (response.data.success) {
+                // Met à jour la position du joueur IA
+                setPlayers(prev => ({
+                    ...prev,
+                    P2: {
+                        ...prev.P2,
+                        position: { 
+                            x: response.data.x, 
+                            y: response.data.y 
+                        }
+                    }
+                }));
+
+                // Vérifie la victoire
+                if (response.data.x === BOARD_SIZE - 1) {
+                    setVictory(true);
+                    setPlayers(prev => ({
+                        ...prev,
+                        P2: { ...prev.P2, isWinner: true }
+                    }));
+                }
+
+                play(SOUND_KEYS.MOVE);
+                changeTurn();
             }
-        });
-
-        return () => {
-            window.removeEventListener("beforeunload", handleBeforeUnload);
+        } catch (err) {
+            console.error("AI error:", err);
+            changeTurn();
         }
-    }, [playerColor, gameId]);
+    };
+
+    const timeout = setTimeout(makeAIMove, 800);
+    return () => clearTimeout(timeout);
+}, [isVsAI, turn, victory, players.P2.id, gameId, aiDifficulty]);
+
 
     const handleSelectPlayer = (player: Player) => {
         if (action === ACTION_PLACE_WALL) {
@@ -246,10 +264,11 @@ const Board: React.FC<BoardProps> = ({ playerColor, gameId }) => {
             setPlayers(prev => ({
                 ...prev,
                 [turn]: {
-                    ...selectedPlayer,
+                    ...prev[turn],
                     position: { x, y }
                 }
             }));
+
             setSelectedPlayer(null);
             play(SOUND_KEYS.MOVE);
             changeTurn();

@@ -19,3 +19,17 @@ export type GameState = {
     currentPlayer: number;
     winner: number | null;
 };
+
+export type TurnHistory = {
+    turnNumber: number;
+    playerPositions: {
+        P1: Position;
+        P2: Position;
+    };
+    walls: Wall[];
+};
+
+export type HistoryResponse = {
+    history: TurnHistory;
+    success: boolean;
+};

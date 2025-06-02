@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import Board, { BOARD_SIZE } from '../components/Board/Board';
+import React, { useRef, useState } from 'react';
+import Board, { BOARD_SIZE, BoardRef } from '../components/Board/Board';
 import { useNavigate } from 'react-router';
 import { Box } from '@mui/material';
 import ControlPanel from '../components/Controls/ControlPanel';
@@ -8,6 +8,7 @@ import ChooseDifficultyGameForAI from '../components/Notify/ChooseDifficultyGame
 import ChoosePlayerColorGame from '../components/Notify/ChoosePlayerColorGame';
 import ChooseRestartNewGame from '../components/Notify/ChooseNewGame';
 import AxiosInstance from '../api/AxiosInstance';
+import { TurnHistory } from '../@types/game';
 
 export const COLOR_P1 = "#f8bbd0";
 export const COLOR_P2 = "#77B5FE";
@@ -29,7 +30,7 @@ const Game: React.FC = () => {
     const [isGameStarted, setIsGameStarted] = useState(false);
     const [openModeGame, setOpenModeGame] = useState(true);
     const [gameId, setGameId] = useState(null);
-
+    const boardRef = useRef<BoardRef>(null);
     const [isVsAI, setIsVsAI] = useState(false);
     const [aiDifficulty, setAiDifficulty] = useState<number | null>(null);
 
@@ -101,6 +102,18 @@ const Game: React.FC = () => {
         navigate("/game");
     };
 
+    const handleHistorySelect = async (history: TurnHistory) => {
+        try {
+            const reponse = await AxiosInstance.get(`turns/${history.turnNumber}`)
+            if (reponse.data.success && boardRef.current) {
+                boardRef.current.updateBoardHistory(history);
+            }
+        }
+        catch (error) {
+            console.error("Error fetching turn history:", error);
+        }
+    }
+
     return (
         <div>
             <ChooseModeGame
@@ -128,7 +141,13 @@ const Game: React.FC = () => {
             {isGameStarted && (
                 <div>
                     <Box display="flex" flexDirection="column">
-                        <ControlPanel onNewGame={() => setOpenNewGame(true)} />
+                        <ControlPanel 
+                            onNewGame={() => setOpenNewGame(true)}
+                            gameId={gameId}
+                            totalTurns={boardRef.current?.totalTurns || 0}
+                            onHistoryUpdate={handleHistorySelect}
+                            onQuit={() => navigate("/")}
+                        />
 
                         <ChooseRestartNewGame
                             open={openNewGame}
@@ -160,6 +179,7 @@ const Game: React.FC = () => {
                         />
 
                         <Board
+                            ref={boardRef}
                             key={gameId}
                             playerColor={playerColor}
                             gameId={gameId}

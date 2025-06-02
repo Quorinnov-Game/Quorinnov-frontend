@@ -1,12 +1,12 @@
 import { Alert, Box, Snackbar, useMediaQuery } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useImperativeHandle, useState } from 'react';
 import Square from './Square';
 import { Player } from '../../@types/player';
 import InfoPanel from '../Controls/InfoPanel';
 import { COLOR_P1, COLOR_P2, TYPES_COLOR } from '../../pages/Game';
 import VictoryOverlay from '../Effect/VictoryOverlay';
 import DefeatOverlay from '../Effect/DefeatOverlay';
-import { Position, Wall } from '../../@types/game';
+import { Position, TurnHistory, Wall } from '../../@types/game';
 import WallPlacer from './WallPlacer';
 import WallFix from './WallFix';
 import AxiosInstance from '../../api/AxiosInstance';
@@ -25,11 +25,16 @@ export const ACTION_MOVE = "move";
 export const ACTION_PLACE_WALL = "placeWall";
 
 type BoardProps = {
-    isVsAI: boolean; 
+    isVsAI: boolean;
     aiDifficulty: number | null;
-  onPlayerMove?: (moveData: any) => void;
+    onPlayerMove?: (moveData: any) => void;
     playerColor: TYPES_COLOR,
     gameId: number | null,
+}
+
+export interface BoardRef {
+    totalTurns: number;
+    updateBoardHistory: (history: TurnHistory) => void;
 }
 
 type ActionType = "move" | "placeWall" | null;
@@ -39,8 +44,8 @@ type MessageState = {
     isVsAI?: boolean;
 }
 
-const Board: React.FC<BoardProps> = ({ playerColor, gameId, isVsAI, onPlayerMove, aiDifficulty}) => {
-    
+// Using React.forwardRef to allow parent components to access the Board's methods and state
+const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isVsAI, onPlayerMove, aiDifficulty }, ref) => {
     const { play } = useSound();
     const isMobile = useMediaQuery('(max-width:600px)')
     const initialPlayers = {
@@ -73,56 +78,93 @@ const Board: React.FC<BoardProps> = ({ playerColor, gameId, isVsAI, onPlayerMove
     const [action, setAtion] = useState<ActionType>(null);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [message, setMessage] = useState<MessageState>({ text: null, type: "warning" });
+    const [totalTurns, setTotalTurns] = useState(0);
 
-    // ... tout le code inchangé au-dessus
+    useImperativeHandle(ref, () => ({
+        totalTurns,
+        updateBoardHistory
+    }))
 
-// Modifiez le useEffect de l'IA comme suit :
-useEffect(() => {
-    if (!isVsAI || victory || turn !== "P2") return;
+    useEffect(() => {
+        if (gameId) {
+            console.log("Game ID:", gameId);
+            setPlayers(initialPlayers);
+            setSelectedPlayer(null);
+            setTurn("P1");
+            setVictory(false);
+            setWalls([]);
+            setTemporaryWall(null);
+            setAtion(null);
+            setOpenSnackbar(false);
+            setMessage({ text: null, type: "warning" });
+        }
 
-    const makeAIMove = async () => {
-        try {
-            const response = await AxiosInstance.post("/ia_play", {
-                player_id: players.P2.id,
-                game_id: gameId,
-                difficulty: aiDifficulty
-            });
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            event.preventDefault();
+        }
+        window.addEventListener("beforeunload", handleBeforeUnload);
 
-            if (response.data.success) {
-                // Met à jour la position du joueur IA
-                setPlayers(prev => ({
-                    ...prev,
-                    P2: {
-                        ...prev.P2,
-                        position: { 
-                            x: response.data.x, 
-                            y: response.data.y 
-                        }
-                    }
-                }));
+        if (!playerColor) return;
 
-                // Vérifie la victoire
-                if (response.data.x === BOARD_SIZE - 1) {
-                    setVictory(true);
+        setPlayers({
+            P1: {
+                ...initialPlayers.P1,
+                color: playerColor,
+            },
+            P2: {
+                ...initialPlayers.P2,
+                color: playerColor === COLOR_P1 ? COLOR_P2 : COLOR_P1,
+            }
+        });
+
+        if (!isVsAI || victory || turn !== "P2") return;
+
+        const makeAIMove = async () => {
+            try {
+                const response = await AxiosInstance.post("/ia_play", {
+                    player_id: players.P2.id,
+                    game_id: gameId,
+                    difficulty: aiDifficulty
+                });
+
+                if (response.data.success) {
+                    // Met à jour la position du joueur IA
                     setPlayers(prev => ({
                         ...prev,
-                        P2: { ...prev.P2, isWinner: true }
+                        P2: {
+                            ...prev.P2,
+                            position: {
+                                x: response.data.x,
+                                y: response.data.y
+                            }
+                        }
                     }));
-                }
 
-                play(SOUND_KEYS.MOVE);
+                    // Vérifie la victoire
+                    if (response.data.x === BOARD_SIZE - 1) {
+                        setVictory(true);
+                        setPlayers(prev => ({
+                            ...prev,
+                            P2: { ...prev.P2, isWinner: true }
+                        }));
+                    }
+
+                    play(SOUND_KEYS.MOVE);
+                    changeTurn();
+                }
+            } catch (err) {
+                console.error("AI error:", err);
                 changeTurn();
             }
-        } catch (err) {
-            console.error("AI error:", err);
-            changeTurn();
+        };
+
+        const timeout = setTimeout(makeAIMove, 800);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+            clearTimeout(timeout);
         }
-    };
-
-    const timeout = setTimeout(makeAIMove, 800);
-    return () => clearTimeout(timeout);
-}, [isVsAI, turn, victory, players.P2.id, gameId, aiDifficulty]);
-
+    }, [playerColor, gameId]);
 
     const handleSelectPlayer = (player: Player) => {
         if (action === ACTION_PLACE_WALL) {
@@ -384,6 +426,7 @@ useEffect(() => {
     const changeTurn = () => {
         setTurn(prev => prev === "P1" ? "P2" : "P1");
         setAtion(null);
+        setTotalTurns(prev => prev + 1);
     }
 
     const showMessage = (text: string) => {
@@ -396,6 +439,23 @@ useEffect(() => {
         setMessage({ text, type: "error" });
         setOpenSnackbar(true);
         play(SOUND_KEYS.ERROR);
+    }
+
+    const updateBoardHistory = (history: TurnHistory) => {
+
+        setPlayers({
+            P1: {
+                ...players.P1,
+                position: history.playerPositions.P1,
+            },
+            P2: {
+                ...players.P2,
+                position: history.playerPositions.P2,
+            }
+        });
+        setWalls(history.walls);
+        setTurn(history.turnNumber % 2 === 0 ? "P1" : "P2");
+        setTotalTurns(history.turnNumber);
     }
 
     return (
@@ -479,7 +539,7 @@ useEffect(() => {
                     variant="filled"
                     sx={{
                         width: '100%',
-                        backgroundColor: message.type === "warning" ? '#af9d18': '#d32f2f',
+                        backgroundColor: message.type === "warning" ? '#af9d18' : '#d32f2f',
                         color: 'white'
                     }}
                 >
@@ -488,6 +548,6 @@ useEffect(() => {
             </Snackbar>
         </Box>
     );
-};
+});
 
 export default Board;

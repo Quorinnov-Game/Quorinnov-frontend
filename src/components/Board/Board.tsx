@@ -43,6 +43,13 @@ type MessageState = {
     isVsAI?: boolean;
 }
 
+const directions = [
+    { dx: -1, dy: 0 }, // Haut
+    { dx: 1, dy: 0 }, // Bas
+    { dx: 0, dy: -1 }, // Gauche
+    { dx: 0, dy: 1 }, // Droite
+];
+
 // Using React.forwardRef to allow parent components to access the Board's methods and state
 const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isVsAI, aiDifficulty }, ref) => {
     const { play } = useSound();
@@ -183,12 +190,6 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
     const getValidMoves = () => {
         if (!selectedPlayer) return [];
         const { x, y } = selectedPlayer.position;
-        const directions = [
-            { dx: -1, dy: 0 }, // Haut
-            { dx: 1, dy: 0 }, // Bas
-            { dx: 0, dy: -1 }, // Gauche
-            { dx: 0, dy: 1 }, // Droite
-        ];
 
         const validMoves: Position[] = [];
         for (const { dx, dy } of directions) {
@@ -349,38 +350,61 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
     };
 
     const handleValidateWall = async () => {
-        if (!temporaryWall || action !== ACTION_PLACE_WALL) return;
+        if (!temporaryWall || action !== ACTION_PLACE_WALL) {
+            console.log('No temporary wall or wrong action');
+            return;
+        }
+
+        // Vérifiez le chemin pour les deux joueurs avec un nouveau mur
+        const testWalls = [...walls, temporaryWall];
+        console.log('Testing with new wall configuration:', testWalls);
+
+        const p1HasPath = hasPathToGoal(players.P1, testWalls);
+        console.log('Player 1 has path:', p1HasPath);
+
+        const p2HasPath = hasPathToGoal(players.P2, testWalls);
+        console.log('Player 2 has path:', p2HasPath);
+
+        if (!p1HasPath || !p2HasPath) {
+            console.log('Wall placement blocked path!');
+            console.log('P1 has path:', p1HasPath);
+            console.log('P2 has path:', p2HasPath);
+            showError("Le mur bloque le chemin vers l'objectif! Placement invalide.");
+            setTemporaryWall(null);
+            setAtion(null);
+            return;
+        }
+
         try {
-            const reponse = await AxiosInstance.post("/place_wall", {
+            const response = await AxiosInstance.post("/place_wall", {
                 player_id: players[turn].id,
                 x: temporaryWall.position.x,
                 y: temporaryWall.position.y,
                 orientation: temporaryWall.orientation,
                 is_valid: true,
-            })
+            });
 
-            if (!reponse.data.success) {
+            if (!response.data.success) {
                 showError("Invalide de mur!");
                 return;
             }
-            else {
-                setWalls(prev => [...prev, temporaryWall]);
-                play(SOUND_KEYS.CORRECT);
-                setPlayers(prev => ({
-                    ...prev,
-                    [turn]: {
-                        ...prev[turn],
-                        wallsRemaining: prev[turn].wallsRemaining - 1
-                    }
-                }));
-                setTemporaryWall(null);
-                changeTurn();
-            }
-        }
-        catch (error) {
+
+            console.log('Wall placement successful');
+            setWalls(prev => [...prev, temporaryWall]);
+            play(SOUND_KEYS.CORRECT);
+            setPlayers(prev => ({
+                ...prev,
+                [turn]: {
+                    ...prev[turn],
+                    wallsRemaining: prev[turn].wallsRemaining - 1
+                }
+            }));
+            setTemporaryWall(null);
+            changeTurn();
+        } catch (error) {
             console.error("Error validating wall:", error);
         }
-    }
+    };
 
     const handleCancelWall = () => {
         setTemporaryWall(null);
@@ -421,6 +445,74 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
         setTurn(history.turnNumber % 2 === 0 ? "P1" : "P2");
         setTotalTurns(history.turnNumber);
     }
+
+    // Fonction pour vérifier les murs bloquant le chemin
+    const isBlocked = (from: Position, to: Position, wallList: Wall[]): boolean => {
+        // Vérifier placement horizontal
+        if (from.y === to.y) {
+            const minX = Math.min(from.x, to.x);
+            return wallList.some(wall =>
+                wall.orientation === HORIZONTAL &&
+                wall.position.x === minX &&
+                (wall.position.y === from.y || wall.position.y + 1 === from.y)
+            );
+        }
+        // Vérifier placement vertical
+        if (from.x === to.x) {
+            const minY = Math.min(from.y, to.y);
+            return wallList.some(wall =>
+                wall.orientation === VERTICAL &&
+                wall.position.y === minY &&
+                (wall.position.x === from.x || wall.position.x + 1 === from.x)
+            );
+        }
+        return false;
+    };
+
+    const hasPathToGoal = (player: Player, walls: Wall[]): boolean => {
+        const visited = new Set<string>();
+        const queue: Position[] = [player.position];
+        const targetRow = player.id === 1 ? 0 : BOARD_SIZE - 1;
+
+        while (queue.length > 0) {
+            const current = queue.shift()!;
+            const posKey = `${current.x},${current.y}`;
+
+            // Vérifier si la position actuelle est la ligne cible
+            if (current.x === targetRow) {
+                console.log(`Found path to goal for Player ${player.id}!`);
+                return true;
+            }
+
+            if (visited.has(posKey)) continue;
+            visited.add(posKey);
+
+            for (const { dx, dy } of directions) {
+                const nextPos = {
+                    x: current.x + dx,
+                    y: current.y + dy
+                };
+
+                // Vérifier si la position suivante est dans les limites du tableau
+                if (
+                    nextPos.x < 0 ||
+                    nextPos.x >= BOARD_SIZE ||
+                    nextPos.y < 0 ||
+                    nextPos.y >= BOARD_SIZE
+                ) continue;
+
+                // Vérifier si la position suivante est bloquée par un mur
+                if (!isBlocked(current, nextPos, walls)) {
+                    console.log('Valid next position:', nextPos);
+                    queue.push(nextPos);
+                } else {
+                    console.log('Blocked path at:', nextPos);
+                }
+            }
+        }
+
+        return false;
+    };
 
     return (
         <Box

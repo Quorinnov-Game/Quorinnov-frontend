@@ -27,7 +27,6 @@ export const ACTION_PLACE_WALL = "placeWall";
 type BoardProps = {
     isVsAI: boolean;
     aiDifficulty: number | null;
-    onPlayerMove?: (moveData: any) => void;
     playerColor: TYPES_COLOR,
     gameId: number | null,
 }
@@ -45,7 +44,7 @@ type MessageState = {
 }
 
 // Using React.forwardRef to allow parent components to access the Board's methods and state
-const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isVsAI, onPlayerMove, aiDifficulty }, ref) => {
+const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isVsAI, aiDifficulty }, ref) => {
     const { play } = useSound();
     const isMobile = useMediaQuery('(max-width:600px)')
     const initialPlayers = {
@@ -86,37 +85,6 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
     }))
 
     useEffect(() => {
-        if (gameId) {
-            console.log("Game ID:", gameId);
-            setPlayers(initialPlayers);
-            setSelectedPlayer(null);
-            setTurn("P1");
-            setVictory(false);
-            setWalls([]);
-            setTemporaryWall(null);
-            setAtion(null);
-            setOpenSnackbar(false);
-            setMessage({ text: null, type: "warning" });
-        }
-
-        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-            event.preventDefault();
-        }
-        window.addEventListener("beforeunload", handleBeforeUnload);
-
-        if (!playerColor) return;
-
-        setPlayers({
-            P1: {
-                ...initialPlayers.P1,
-                color: playerColor,
-            },
-            P2: {
-                ...initialPlayers.P2,
-                color: playerColor === COLOR_P1 ? COLOR_P2 : COLOR_P1,
-            }
-        });
-
         if (!isVsAI || victory || turn !== "P2") return;
 
         const makeAIMove = async () => {
@@ -159,12 +127,8 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
         };
 
         const timeout = setTimeout(makeAIMove, 800);
-
-        return () => {
-            window.removeEventListener("beforeunload", handleBeforeUnload);
-            clearTimeout(timeout);
-        }
-    }, [playerColor, gameId]);
+        return () => clearTimeout(timeout);
+    }, [isVsAI, turn, victory, players.P2.id, gameId, aiDifficulty]);
 
     const handleSelectPlayer = (player: Player) => {
         if (action === ACTION_PLACE_WALL) {

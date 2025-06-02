@@ -34,7 +34,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ onNewGame, gameId, totalTur
                 totalTurns={totalTurns}
                 onSelectTurn={handleSelectTurn}
             />
-            <Button variant="contained" color="warning" onClick={onRedo}>Redo</Button>
+            <Button variant="contained" color="warning" onClick={onRedo}>Actuelle</Button>
             <Button variant="contained" color="error" onClick={onQuit}>Quitter</Button>
         </Box>
     );

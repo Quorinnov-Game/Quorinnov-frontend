@@ -114,6 +114,24 @@ const Game: React.FC = () => {
         }
     }
 
+    const handleRedo = async () => {
+        if (!gameId || !boardRef.current) return;
+
+        try {
+            const totalTurns = boardRef.current?.totalTurns || 0;
+
+            const response = await AxiosInstance.get(
+                `/turns/${totalTurns}`
+            );
+
+            if (response.data.success && boardRef.current) {
+                boardRef.current.updateBoardHistory(response.data.history);
+            }
+        } catch (error) {
+            console.error("Error performing redo:", error);
+        }
+    };
+
     return (
         <div>
             <ChooseModeGame
@@ -141,12 +159,13 @@ const Game: React.FC = () => {
             {isGameStarted && (
                 <div>
                     <Box display="flex" flexDirection="column">
-                        <ControlPanel 
+                        <ControlPanel
                             onNewGame={() => setOpenNewGame(true)}
                             gameId={gameId}
                             totalTurns={boardRef.current?.totalTurns || 0}
                             onHistoryUpdate={handleHistorySelect}
                             onQuit={() => navigate("/")}
+                            onRedo={handleRedo}
                         />
 
                         <ChooseRestartNewGame

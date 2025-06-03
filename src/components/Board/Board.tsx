@@ -103,29 +103,55 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
                 });
 
                 if (response.data.success) {
-                    // Met à jour la position du joueur IA
-                    setPlayers(prev => ({
-                        ...prev,
-                        P2: {
-                            ...prev.P2,
-                            position: {
-                                x: response.data.x,
-                                y: response.data.y
-                            }
-                        }
-                    }));
+                    const action = response.data.action;
 
-                    // Vérifie la victoire
-                    if (response.data.x === BOARD_SIZE - 1) {
-                        setVictory(true);
+                    if (action === "player") {
                         setPlayers(prev => ({
                             ...prev,
-                            P2: { ...prev.P2, isWinner: true }
+                            P2: {
+                                ...prev.P2,
+                                position: {
+                                    x: response.data.x,
+                                    y: response.data.y
+                                }
+                            }
                         }));
+
+                        if (response.data.x === BOARD_SIZE - 1) {
+                            setVictory(true);
+                            setPlayers(prev => ({
+                                ...prev,
+                                P2: { ...prev.P2, isWinner: true }
+                            }));
+                        }
+
+                        play(SOUND_KEYS.MOVE);
+                        changeTurn();
                     }
 
-                    play(SOUND_KEYS.MOVE);
-                    changeTurn();
+                    else if (action === "wall") {
+                        const newWall: Wall = {
+                            playerId: players.P2.id,
+                            position: {
+                                x: response.data.x,
+                                y: response.data.y,
+                            },
+                            orientation: response.data.orientation,
+                        };
+
+                        setWalls(prev => [...prev, newWall]);
+
+                        setPlayers(prev => ({
+                            ...prev,
+                            P2: {
+                                ...prev.P2,
+                                wallsRemaining: prev.P2.wallsRemaining - 1
+                            }
+                        }));
+
+                        play(SOUND_KEYS.PLACE_WALL);
+                        changeTurn();
+                    }
                 }
             } catch (err) {
                 console.error("AI error:", err);

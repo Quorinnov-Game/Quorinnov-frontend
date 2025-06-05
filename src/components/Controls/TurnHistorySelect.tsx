@@ -4,9 +4,10 @@ import React, { useEffect, useState } from "react";
 type TurnHistorySelectProps = {
     totalTurns: number;
     onSelectTurn: (turnNumber: number) => void;
+    isVsAI?: boolean;
 };
 
-const TurnHistorySelect: React.FC<TurnHistorySelectProps> = ({ totalTurns, onSelectTurn }) => {
+const TurnHistorySelect: React.FC<TurnHistorySelectProps> = ({ totalTurns, onSelectTurn, isVsAI }) => {
     const [selectedTurn, setSelectedTurn] = useState<number>(totalTurns);
 
     const handleChange = (event: SelectChangeEvent<number>) => {
@@ -24,7 +25,7 @@ const TurnHistorySelect: React.FC<TurnHistorySelectProps> = ({ totalTurns, onSel
                 label="History"
                 onChange={handleChange}
                 sx={{ 
-                    color: "Scrollbar",
+                    color: "black",
                     backgroundColor: "lightgoldenrodyellow",
                 }}
             >
@@ -33,7 +34,7 @@ const TurnHistorySelect: React.FC<TurnHistorySelectProps> = ({ totalTurns, onSel
                         key={index} 
                         value={index}
                     >
-                        {index === 0 ? "Initiale" : `Tourner ${index} (${index % 2 === 0 ? "P1" : "P2"})`}
+                        {index === 0 ? "Initiale" : `Turn${index} (${isVsAI && index % 2 === 0 ? "P2" : "P1"})`}
                     </MenuItem>
                 ))}
             </Select>

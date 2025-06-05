@@ -173,6 +173,7 @@ const Game: React.FC = () => {
                             onSelectTurn={handleSelectTurn}
                             onQuit={() => navigate("/")}
                             onRedo={handleRedo}
+                            isVsAI={isVsAI}
                         />
 
                         <ChooseRestartNewGame

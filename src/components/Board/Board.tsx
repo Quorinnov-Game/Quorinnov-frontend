@@ -117,9 +117,9 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
             onTurnUpdate(totalTurns);
         }
 
-        if (!isVsAI || victory || turn !== "P2") return;
-
         const makeAIMove = async () => {
+            if (isViewingHistory || !isVsAI || victory || turn !== "P2") return;
+
             try {
                 const response = await AxiosInstance.post("/ia_play", {
                     player_id: players.P2.id,

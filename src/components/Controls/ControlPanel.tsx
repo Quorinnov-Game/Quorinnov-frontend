@@ -9,9 +9,10 @@ type ControlPanelProps = {
     onSelectTurn: (turnNumber: number) => void;
     onRedo?: () => void,
     onQuit?: () => void,
+    isVsAI?: boolean;
 }
 
-const ControlPanel: React.FC<ControlPanelProps> = ({ onNewGame, gameId, totalTurns, onSelectTurn, onRedo, onQuit }) => {
+const ControlPanel: React.FC<ControlPanelProps> = ({ onNewGame, gameId, totalTurns, onSelectTurn, onRedo, onQuit, isVsAI }) => {
     useEffect(() => {
         console.log("ControlPanel rendered with totalTurns:", totalTurns);
     }), [totalTurns]
@@ -24,8 +25,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ onNewGame, gameId, totalTur
                 totalTurns={totalTurns}
                 onSelectTurn={onSelectTurn}
                 key={totalTurns}
+                isVsAI={isVsAI}
             />
-            <Button variant="contained" color="warning" onClick={onRedo} disabled={!totalTurns}>Actuelle</Button>
+            <Button variant="contained" color="warning" onClick={onRedo}>Actuelle</Button>
             <Button variant="contained" color="error" onClick={onQuit}>Quitter</Button>
         </Box>
     );

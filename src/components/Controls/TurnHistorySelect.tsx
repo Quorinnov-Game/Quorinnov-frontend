@@ -1,4 +1,5 @@
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import React, { useEffect, useState } from "react";
 
 type TurnHistorySelectProps = {
     totalTurns: number;
@@ -6,9 +7,15 @@ type TurnHistorySelectProps = {
 };
 
 const TurnHistorySelect: React.FC<TurnHistorySelectProps> = ({ totalTurns, onSelectTurn }) => {
+    const [selectedTurn, setSelectedTurn] = useState<number>(totalTurns);
+
     const handleChange = (event: SelectChangeEvent<number>) => {
-        onSelectTurn(Number(event.target.value));
+        const turnNumber = Number(event.target.value);
+        setSelectedTurn(turnNumber);
+        onSelectTurn(turnNumber);
     };
+
+    console.log("TurnHistorySelect rendered with totalTurns:", totalTurns);
 
     return (
         <FormControl sx={{ minWidth: 120, color:"Highlight" }}>
@@ -21,14 +28,14 @@ const TurnHistorySelect: React.FC<TurnHistorySelectProps> = ({ totalTurns, onSel
                     backgroundColor: "lightgoldenrodyellow",
                 }}
             >
-                {[...Array(totalTurns)].map((_, index) => {
-                    const turnNumber = totalTurns - index;
-                    return (
-                        <MenuItem key={turnNumber} value={turnNumber}>
-                            {`Turn ${turnNumber}`}
-                        </MenuItem>
-                    );
-                })}
+                {[...Array(totalTurns + 1)].map((_, index) => (
+                    <MenuItem 
+                        key={index} 
+                        value={index}
+                    >
+                        {index === 0 ? "Initial State" : `Turn ${index}`}
+                    </MenuItem>
+                ))}
             </Select>
         </FormControl>
     );

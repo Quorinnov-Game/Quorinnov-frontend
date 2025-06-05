@@ -21,10 +21,10 @@ export type GameState = {
 };
 
 export type TurnHistory = {
-    turnNumber: number;
-    playerPositions: {
-        P1: Position;
-        P2: Position;
+    id: number;
+    position: {
+        player1: Position;
+        player2: Position;
     };
     walls: Wall[];
 };
@@ -33,3 +33,12 @@ export type HistoryResponse = {
     history: TurnHistory;
     success: boolean;
 };
+
+export type TurnState = {
+    players: {
+        P1: Player;
+        P2: Player;
+    };
+    walls: Wall[];
+    turn: "P1" | "P2";
+}

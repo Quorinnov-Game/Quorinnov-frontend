@@ -1,12 +1,12 @@
 import { Alert, Box, Snackbar, useMediaQuery } from '@mui/material';
-import React, { useEffect, useImperativeHandle, useState } from 'react';
+import React, { useCallback, useEffect, useImperativeHandle, useState } from 'react';
 import Square from './Square';
 import { Player } from '../../@types/player';
 import InfoPanel from '../Controls/InfoPanel';
 import { COLOR_P1, COLOR_P2, TYPES_COLOR } from '../../pages/Game';
 import VictoryOverlay from '../Effect/VictoryOverlay';
 import DefeatOverlay from '../Effect/DefeatOverlay';
-import { Position, TurnHistory, Wall } from '../../@types/game';
+import { Position, TurnHistory, TurnState, Wall } from '../../@types/game';
 import WallPlacer from './WallPlacer';
 import WallFix from './WallFix';
 import AxiosInstance from '../../api/AxiosInstance';
@@ -29,11 +29,13 @@ type BoardProps = {
     aiDifficulty: number | null;
     playerColor: TYPES_COLOR,
     gameId: number | null,
+    onTurnUpdate?: (turnNumber: number) => void;
 }
 
 export interface BoardRef {
     totalTurns: number;
     updateBoardHistory: (history: TurnHistory) => void;
+    resetViewMode: () => void;
 }
 
 type ActionType = "move" | "placeWall" | null;
@@ -51,7 +53,7 @@ const directions = [
 ];
 
 // Using React.forwardRef to allow parent components to access the Board's methods and state
-const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isVsAI, aiDifficulty }, ref) => {
+const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isVsAI, aiDifficulty, onTurnUpdate }, ref) => {
     const { play } = useSound();
     const isMobile = useMediaQuery('(max-width:600px)')
     const initialPlayers = {
@@ -85,13 +87,36 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [message, setMessage] = useState<MessageState>({ text: null, type: "warning" });
     const [totalTurns, setTotalTurns] = useState(0);
+    const [isViewingHistory, setIsViewingHistory] = useState(false);
+    const [currentGameState, setCurrentGameState] = useState<TurnState>({
+        players: initialPlayers,
+        walls: [],
+        turn: "P1"
+    });
 
     useImperativeHandle(ref, () => ({
         totalTurns,
-        updateBoardHistory
-    }))
+        updateBoardHistory,
+        resetViewMode,
+    }), [totalTurns, currentGameState]);
 
     useEffect(() => {
+        if (!isViewingHistory) {
+            const newGameState: TurnState = {
+            players: {
+                P1: { ...players.P1 },
+                P2: { ...players.P2 }
+            },
+            walls: [...walls],
+            turn: turn
+        };
+        setCurrentGameState(newGameState);
+        }
+
+        if (onTurnUpdate) {
+            onTurnUpdate(totalTurns);
+        }
+
         if (!isVsAI || victory || turn !== "P2") return;
 
         const makeAIMove = async () => {
@@ -161,9 +186,14 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
 
         const timeout = setTimeout(makeAIMove, 800);
         return () => clearTimeout(timeout);
-    }, [isVsAI, turn, victory, players.P2.id, gameId, aiDifficulty]);
+    }, [isVsAI, turn, victory, players.P2.id, gameId, aiDifficulty, totalTurns, onTurnUpdate, players, walls, isViewingHistory]);
 
     const handleSelectPlayer = (player: Player) => {
+        if (isViewingHistory) {
+            showMessage("Impossible de jouer en mode historique");
+            return;
+        }
+
         if (action === ACTION_PLACE_WALL) {
             showMessage("Vous êtes en train de placer un mur, impossible de déplacer");
             return;
@@ -304,7 +334,9 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
 
             setSelectedPlayer(null);
             play(SOUND_KEYS.MOVE);
+            setTotalTurns(prev => prev + 1);
             changeTurn();
+            console.log("totalTurns", totalTurns);
         }
         catch (error) {
             console.error("Error validating wall:", error);
@@ -312,6 +344,11 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
     };
 
     const handlePlaceWall = (wall: Wall) => {
+        if (isViewingHistory) {
+            showMessage("Impossible de placer un mur en mode historique");
+            return;
+        }
+
         if (action === ACTION_MOVE) {
             showMessage("Vous êtes en train de déplacer, impossible de placer un mur");
             return;
@@ -426,7 +463,9 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
                 }
             }));
             setTemporaryWall(null);
+            setTotalTurns(prev => prev + 1);
             changeTurn();
+            console.log("totalTurns", totalTurns);
         } catch (error) {
             console.error("Error validating wall:", error);
         }
@@ -440,7 +479,6 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
     const changeTurn = () => {
         setTurn(prev => prev === "P1" ? "P2" : "P1");
         setAtion(null);
-        setTotalTurns(prev => prev + 1);
     }
 
     const showMessage = (text: string) => {
@@ -456,21 +494,41 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
     }
 
     const updateBoardHistory = (history: TurnHistory) => {
+        console.log("Updating board history with:", history);
+        setIsViewingHistory(true);
 
-        setPlayers({
+        setPlayers(prev => ({
             P1: {
-                ...players.P1,
-                position: history.playerPositions.P1,
+                ...prev.P1,
+                position: history.position.player1,
             },
             P2: {
-                ...players.P2,
-                position: history.playerPositions.P2,
+                ...prev.P2,
+                position: history.position.player2,
             }
-        });
+        }));
+
+        console.log("Players updated:", players);
         setWalls(history.walls);
-        setTurn(history.turnNumber % 2 === 0 ? "P1" : "P2");
-        setTotalTurns(history.turnNumber);
+        console.log("Walls updated:", walls);
+        setTurn(getTurnFromNumber(history.id));
     }
+
+    const resetViewMode = useCallback(() => {
+        console.log("Resetting to current game state");
+        setIsViewingHistory(false);
+        
+        setPlayers({
+            P1: { ...currentGameState.players.P1 },
+            P2: { ...currentGameState.players.P2 }
+        });
+        setWalls(currentGameState.walls);
+        setTurn(currentGameState.turn);
+
+        setSelectedPlayer(null);
+        setTemporaryWall(null);
+        setAtion(null);
+    }, [currentGameState]);
 
     // Fonction pour vérifier les murs bloquant le chemin
     const isBlocked = (from: Position, to: Position, wallList: Wall[]): boolean => {
@@ -540,6 +598,10 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
         return false;
     };
 
+    const getTurnFromNumber = (turnNumber: number): "P1" | "P2" => {
+        return turnNumber % 2 === 1 ? "P1" : "P2";
+    };
+
     return (
         <Box
             display="flex"
@@ -547,7 +609,10 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
             alignItems={isMobile ? "center" : "normal"}
             justifyContent={isMobile ? "center" : "normal"}
             gap={4}
-
+            sx={{
+                pointerEvents: isViewingHistory ? "none" : "auto",
+                position: "relative",
+            }}
         >
             <Box
                 display="grid"

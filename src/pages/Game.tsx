@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Board, { BOARD_SIZE, BoardRef } from '../components/Board/Board';
 import { useNavigate } from 'react-router';
 import { Box } from '@mui/material';
@@ -8,7 +8,7 @@ import ChooseDifficultyGameForAI from '../components/Notify/ChooseDifficultyGame
 import ChoosePlayerColorGame from '../components/Notify/ChoosePlayerColorGame';
 import ChooseRestartNewGame from '../components/Notify/ChooseNewGame';
 import AxiosInstance from '../api/AxiosInstance';
-import { TurnHistory } from '../@types/game';
+import { HistoryResponse, TurnHistory } from '../@types/game';
 
 export const COLOR_P1 = "#f8bbd0";
 export const COLOR_P2 = "#77B5FE";
@@ -33,6 +33,7 @@ const Game: React.FC = () => {
     const boardRef = useRef<BoardRef>(null);
     const [isVsAI, setIsVsAI] = useState(false);
     const [aiDifficulty, setAiDifficulty] = useState<number | null>(null);
+    const [currentTotalTurns, setCurrentTotalTurns] = useState(0);
 
     const handleNewGame = () => {
         setOpenNewGame(false);
@@ -102,11 +103,13 @@ const Game: React.FC = () => {
         navigate("/game");
     };
 
-    const handleHistorySelect = async (history: TurnHistory) => {
+    const handleSelectTurn = async (turnNumber: number) => {
         try {
-            const reponse = await AxiosInstance.get(`turns/${history.turnNumber}`)
+            console.log("Selected history turn:", turnNumber);
+            const reponse = await AxiosInstance.get<HistoryResponse>(`/turns/${turnNumber}`)
             if (reponse.data.success && boardRef.current) {
-                boardRef.current.updateBoardHistory(history);
+                console.log("Turn history fetched successfully:", reponse.data.history);
+                boardRef.current.updateBoardHistory(reponse.data.history);
             }
         }
         catch (error) {
@@ -115,22 +118,12 @@ const Game: React.FC = () => {
     }
 
     const handleRedo = async () => {
-        if (!gameId || !boardRef.current) return;
-
-        try {
-            const totalTurns = boardRef.current?.totalTurns || 0;
-
-            const response = await AxiosInstance.get(
-                `/turns/${totalTurns}`
-            );
-
-            if (response.data.success && boardRef.current) {
-                boardRef.current.updateBoardHistory(response.data.history);
-            }
-        } catch (error) {
-            console.error("Error performing redo:", error);
-        }
+        boardRef.current?.resetViewMode();
     };
+
+    const handleTurnUpdate = useCallback((turnNumber: number) => {
+        setCurrentTotalTurns(turnNumber);
+    }, [])
 
     return (
         <div>
@@ -163,7 +156,7 @@ const Game: React.FC = () => {
                             onNewGame={() => setOpenNewGame(true)}
                             gameId={gameId}
                             totalTurns={boardRef.current?.totalTurns || 0}
-                            onHistoryUpdate={handleHistorySelect}
+                            onSelectTurn={handleSelectTurn}
                             onQuit={() => navigate("/")}
                             onRedo={handleRedo}
                         />
@@ -204,6 +197,7 @@ const Game: React.FC = () => {
                             gameId={gameId}
                             isVsAI={isVsAI}
                             aiDifficulty={aiDifficulty}
+                            onTurnUpdate={handleTurnUpdate}
                         />
                     </Box>
                 </div>

@@ -33,7 +33,7 @@ const TurnHistorySelect: React.FC<TurnHistorySelectProps> = ({ totalTurns, onSel
                         key={index} 
                         value={index}
                     >
-                        {index === 0 ? "Initial State" : `Turn ${index}`}
+                        {index === 0 ? "Initiale" : `Tourner ${index} (${index % 2 === 0 ? "P1" : "P2"})`}
                     </MenuItem>
                 ))}
             </Select>

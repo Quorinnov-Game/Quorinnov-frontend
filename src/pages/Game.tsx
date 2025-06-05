@@ -105,14 +105,28 @@ const Game: React.FC = () => {
 
     const handleSelectTurn = async (turnNumber: number) => {
         try {
-            console.log("Selected history turn:", turnNumber);
-            const reponse = await AxiosInstance.get<HistoryResponse>(`/turns/${turnNumber}`)
-            if (reponse.data.success && boardRef.current) {
-                console.log("Turn history fetched successfully:", reponse.data.history);
-                boardRef.current.updateBoardHistory(reponse.data.history);
+            if (turnNumber === 0) {
+                if (boardRef.current) {
+                    const initialState = {
+                        id: 0,
+                        position: {
+                            player1: { x: BOARD_SIZE - 1, y: Math.floor(BOARD_SIZE / 2) },
+                            player2: { x: 0, y: Math.floor(BOARD_SIZE / 2) }
+                        },
+                        walls: []
+                    };
+                    boardRef.current.updateBoardHistory(initialState);
+                }
+            } else {
+                // Xử lý các turn khác
+                console.log("Selected history turn:", turnNumber);
+                const response = await AxiosInstance.get<HistoryResponse>(`/turns/${turnNumber}`);
+                if (response.data.success && boardRef.current) {
+                    console.log("Turn history fetched successfully:", response.data.history);
+                    boardRef.current.updateBoardHistory(response.data.history);
+                }
             }
-        }
-        catch (error) {
+        } catch (error) {
             console.error("Error fetching turn history:", error);
         }
     }

@@ -103,14 +103,14 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
     useEffect(() => {
         if (!isViewingHistory) {
             const newGameState: TurnState = {
-            players: {
-                P1: { ...players.P1 },
-                P2: { ...players.P2 }
-            },
-            walls: [...walls],
-            turn: turn
-        };
-        setCurrentGameState(newGameState);
+                players: {
+                    P1: { ...players.P1 },
+                    P2: { ...players.P2 }
+                },
+                walls: [...walls],
+                turn: turn
+            };
+            setCurrentGameState(newGameState);
         }
 
         if (onTurnUpdate) {
@@ -599,7 +599,7 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
     };
 
     const getTurnFromNumber = (turnNumber: number): "P1" | "P2" => {
-        return turnNumber % 2 === 1 ? "P1" : "P2";
+        return turnNumber % 2 === 0 ? "P1" : "P2";
     };
 
     return (

@@ -81,6 +81,7 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
     const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
     const [turn, setTurn] = useState<"P1" | "P2">("P1")
     const [victory, setVictory] = useState(false);
+    const [defeat, setDefeat] = useState(false);
     const [walls, setWalls] = useState<Wall[]>([]);
     const [temporaryWall, setTemporaryWall] = useState<Wall | null>(null);
     const [action, setAtion] = useState<ActionType>(null);
@@ -143,7 +144,7 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
                         }));
 
                         if (response.data.x === BOARD_SIZE - 1) {
-                            setVictory(true);
+                            setDefeat(true);
                             setPlayers(prev => ({
                                 ...prev,
                                 P2: { ...prev.P2, isWinner: true }
@@ -680,7 +681,7 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
             </Box>
 
             {victory && <VictoryOverlay players={players} />}
-            {/* {victory && <DefeatOverlay/>} */}
+            {defeat && <DefeatOverlay/>}
 
             <InfoPanel
                 players={players}

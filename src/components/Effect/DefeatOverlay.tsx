@@ -3,15 +3,20 @@ import { loadSlim } from "tsparticles-slim";
 import { Engine } from "tsparticles-engine";
 import Particles from "react-tsparticles";
 import { motion } from "framer-motion";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
+import { useNavigate } from "react-router";
 
 const DefeatOverlay = () => {
     const [showParticles, setShowParticles] = useState(true);
+    const navigate = useNavigate();
+    const [showExitButton, setShowExitButton] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => {
             setShowParticles(false);
         }, 3000); // Show particles for 3s
+
+        setShowExitButton(true);
         return () => clearTimeout(timer);
     }, []);
 
@@ -138,8 +143,32 @@ const DefeatOverlay = () => {
                     >
                         Vous avez perdu!
                     </Typography>
+
+                    {showExitButton && (
+                        <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 0.5 }}
+                        >
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => navigate("/")}
+                                sx={{
+                                    fontSize: "1.2rem",
+                                    padding: "12px 24px",
+                                    backgroundColor: "#d32f2f",
+                                    '&:hover': {
+                                        backgroundColor: "#b71c1c"
+                                    }
+                                }}
+                            >
+                                Quitter
+                            </Button>
+                        </motion.div>
+                    )}
                 </motion.div>
-            </Box>
+            </Box >
         </>
     )
 };

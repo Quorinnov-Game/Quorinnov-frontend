@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import Particles from "react-tsparticles";
 import { useCallback, useEffect, useState } from "react";
@@ -7,12 +7,15 @@ import { Player } from "../../@types/player";
 import { NAME_PLAYER1, NAME_PLAYER2 } from "../Board/Board";
 import { useSound } from "../../hooks/useSound";
 import { SOUND_KEYS } from "../../constants/sound";
+import { useNavigate } from "react-router";
 
 type VictoryOverlayProps = {
-    players: {P1: Player, P2: Player};
+    players: { P1: Player, P2: Player };
 };
 
 const VictoryOverlay: React.FC<VictoryOverlayProps> = ({ players }) => {
+    const navigate = useNavigate();
+    const [showExitButton, setShowExitButton] = useState(false);
     const [showFireworks, setShowFireworks] = useState(true);
     const { play } = useSound();
 
@@ -22,6 +25,8 @@ const VictoryOverlay: React.FC<VictoryOverlayProps> = ({ players }) => {
         const timer = setTimeout(() => {
             setShowFireworks(false);
         }, 3000); // 30 seconds
+
+        setShowExitButton(true);
         return () => clearTimeout(timer);
     }, []);
 
@@ -76,6 +81,30 @@ const VictoryOverlay: React.FC<VictoryOverlayProps> = ({ players }) => {
                     }}>
                     {players.P1.isWinner ? `${NAME_PLAYER1} avez gagné!` : `${NAME_PLAYER2} avez gagné!`}
                 </Typography>
+
+                {showExitButton && (
+                    <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.5 }}
+                    >
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => navigate("/")}
+                            sx={{
+                                fontSize: "1.2rem",
+                                padding: "12px 24px",
+                                backgroundColor: "#d32f2f",
+                                '&:hover': {
+                                    backgroundColor: "#b71c1c"
+                                }
+                            }}
+                        >
+                            Quitter
+                        </Button>
+                    </motion.div>
+                )}
             </motion.div>
         </Box>
     );

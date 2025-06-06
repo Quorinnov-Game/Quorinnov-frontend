@@ -1,5 +1,5 @@
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 type TurnHistorySelectProps = {
     totalTurns: number;
@@ -8,11 +8,9 @@ type TurnHistorySelectProps = {
 };
 
 const TurnHistorySelect: React.FC<TurnHistorySelectProps> = ({ totalTurns, onSelectTurn, isVsAI }) => {
-    const [selectedTurn, setSelectedTurn] = useState<number>(totalTurns);
 
     const handleChange = (event: SelectChangeEvent<number>) => {
         const turnNumber = Number(event.target.value);
-        setSelectedTurn(turnNumber);
         onSelectTurn(turnNumber);
     };
 
@@ -34,7 +32,7 @@ const TurnHistorySelect: React.FC<TurnHistorySelectProps> = ({ totalTurns, onSel
                         key={index} 
                         value={index}
                     >
-                        {index === 0 ? "Initiale" : `Turn${index} (${isVsAI && index % 2 === 0 ? "P2" : "P1"})`}
+                        {index === 0 ? "Initiale" : `Turn${index} (${!isVsAI && index % 2 === 0 ? "P2" : "P1"})`}
                     </MenuItem>
                 ))}
             </Select>

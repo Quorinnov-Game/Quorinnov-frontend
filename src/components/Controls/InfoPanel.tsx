@@ -12,6 +12,10 @@ type InfoPanelProps = {
     showWallControls?: boolean;
 };
 
+/**
+ * Composant affichant la barre de murs restants
+ * @param {number} count - Nombre de murs restants
+ */
 const WallBar = ({ count }: { count: number }) => {
     return (
         <Box display="flex" flexDirection="row" gap={1} justifyContent="center" mt={1}>

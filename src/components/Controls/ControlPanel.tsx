@@ -1,10 +1,8 @@
 import { Box, Button } from "@mui/material";
 import TurnHistorySelect from "./TurnHistorySelect";
-import { useEffect } from "react";
 
 type ControlPanelProps = {
     onNewGame?: () => void,
-    gameId: string | null;
     totalTurns: number;
     onSelectTurn: (turnNumber: number) => void;
     onRedo?: () => void,
@@ -12,11 +10,7 @@ type ControlPanelProps = {
     isVsAI?: boolean;
 }
 
-const ControlPanel: React.FC<ControlPanelProps> = ({ onNewGame, gameId, totalTurns, onSelectTurn, onRedo, onQuit, isVsAI }) => {
-    useEffect(() => {
-        console.log("ControlPanel rendered with totalTurns:", totalTurns);
-    }), [totalTurns]
-
+const ControlPanel: React.FC<ControlPanelProps> = ({ onNewGame, totalTurns, onSelectTurn, onRedo, onQuit, isVsAI }) => {
     return (
         <Box display="flex" gap={2} mb={2}>
             <Button variant="contained" color="primary" onClick={onNewGame}>Nouvelle partie</Button>

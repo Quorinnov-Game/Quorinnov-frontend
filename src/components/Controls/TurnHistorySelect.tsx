@@ -1,14 +1,29 @@
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import React from "react";
 
+/**
+ * Props pour le sélecteur d'historique des tours
+ * @typedef {Object} TurnHistorySelectProps
+ * @property {number} totalTurns - Nombre total de tours joués
+ * @property {Function} onSelectTurn - Fonction appelée lors de la sélection d'un tour
+ * @property {boolean} isVsAI - Indique si le mode est contre l'IA
+ */
 type TurnHistorySelectProps = {
     totalTurns: number;
     onSelectTurn: (turnNumber: number) => void;
     isVsAI?: boolean;
 };
 
+/**
+ * Composant permettant de naviguer dans l'historique des tours
+ * @param {TurnHistorySelectProps} props - Les propriétés du composant
+ */
 const TurnHistorySelect: React.FC<TurnHistorySelectProps> = ({ totalTurns, onSelectTurn, isVsAI }) => {
 
+    /**
+     * Gère le changement de tour sélectionné
+     * @param {SelectChangeEvent<number>} event - L'événement de changement
+     */
     const handleChange = (event: SelectChangeEvent<number>) => {
         const turnNumber = Number(event.target.value);
         onSelectTurn(turnNumber);

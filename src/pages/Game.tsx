@@ -167,7 +167,6 @@ const Game: React.FC = () => {
                     <Box display="flex" flexDirection="column">
                         <ControlPanel
                             onNewGame={() => setOpenNewGame(true)}
-                            gameId={gameId}
                             totalTurns={boardRef.current?.totalTurns || 0}
                             onSelectTurn={handleSelectTurn}
                             onQuit={() => navigate("/")}

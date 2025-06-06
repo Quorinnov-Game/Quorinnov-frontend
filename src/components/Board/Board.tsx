@@ -14,10 +14,21 @@ import { useSound } from '../../hooks/useSound';
 import { SOUND_KEYS } from '../../constants/sound';
 import { useAIMove } from '../../hooks/useAIMove';
 
-export const BOARD_SIZE = 9;
-export const GAP_CELLULE = 10;
-export const GRID_SIZE = 50;
-export const PADDING_BOARD = 8;
+/**
+ * Composant principal du plateau de jeu
+ * @description 
+ * Gère l'état global du jeu, incluant:
+ * - La position des joueurs
+ * - Le placement des murs
+ * - Les tours de jeu
+ * - Le mode IA
+ * - L'historique des coups
+ */
+
+export const BOARD_SIZE = 9; // Taille du plateau (9x9)
+export const GAP_CELLULE = 10; // Espacement entre les cellules
+export const GRID_SIZE = 50; // Taille des cellules
+export const PADDING_BOARD = 8; // Marge interne du plateau
 export const HORIZONTAL = "horizontal";
 export const VERTICAL = "vertical";
 export const NAME_PLAYER1 = "Player1";
@@ -394,13 +405,9 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
 
         // Vérifiez le chemin pour les deux joueurs avec un nouveau mur
         const testWalls = [...walls, temporaryWall];
-        console.log('Testing with new wall configuration:', testWalls);
 
         const p1HasPath = hasPathToGoal(players.P1, testWalls);
-        console.log('Player 1 has path:', p1HasPath);
-
         const p2HasPath = hasPathToGoal(players.P2, testWalls);
-        console.log('Player 2 has path:', p2HasPath);
 
         if (!p1HasPath || !p2HasPath) {
             console.log('Wall placement blocked path!');
@@ -426,7 +433,6 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
                 return;
             }
 
-            console.log('Wall placement successful');
             setWalls(prev => [...prev, temporaryWall]);
             play(SOUND_KEYS.CORRECT);
             setPlayers(prev => ({
@@ -439,7 +445,6 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
             setTemporaryWall(null);
             setTotalTurns(prev => prev + 1);
             changeTurn();
-            console.log("totalTurns", totalTurns);
         } catch (error) {
             console.error("Error validating wall:", error);
         }
@@ -463,7 +468,6 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
     }
 
     const updateBoardHistory = (history: TurnHistory) => {
-        console.log("Updating board history with:", history);
         setIsViewingHistory(true);
 
         setPlayers(prev => ({
@@ -477,14 +481,11 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
             }
         }));
 
-        console.log("Players updated:", players);
         setWalls(history.walls);
-        console.log("Walls updated:", walls);
         setTurn(getTurnFromNumber(history.id));
     }
 
     const resetViewMode = useCallback(() => {
-        console.log("Resetting to current game state");
         setIsViewingHistory(false);
         
         setPlayers({
@@ -625,7 +626,6 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
                             onSelectPlayer={handleSelectPlayer}
                             onMovePlayer={movePlayer}
                             isValidMove={getValidMoves().some(pos => pos.x === x && pos.y === y)}
-                            turn={turn}
                         />
                     ))
                 ))}

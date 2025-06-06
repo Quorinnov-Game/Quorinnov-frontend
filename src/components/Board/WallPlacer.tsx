@@ -26,6 +26,11 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
 
     const cellSize = GRID_SIZE + GAP_CELLULE;
 
+    /**
+     * Vérifie si un mur croise un autre mur
+     * @param wall - Le mur à vérifier
+     * @returns boolean - Vrai si le mur croise un autre mur
+     */
     const isWallCrossing = (wall: Wall) => {
         // Vérifiez si le mur croise un autre mur
         return walls.some(existingWall =>
@@ -37,6 +42,11 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
         );
     }
 
+    /**
+     * Vérifie si un mur est adjacent ou superposé à un autre mur
+     * @param wall - Le mur à vérifier
+     * @returns boolean - Vrai si le mur est adjacent ou superposé à un autre mur
+     */
     const isOverlappingWall = (wall: Wall) => {
         // Vérifiez si le mur est adjacent ou superposé à un autre mur
         return walls.some(existingWall =>
@@ -59,23 +69,16 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
     const handleClickWall = (event: React.MouseEvent<HTMLDivElement>) => {
         const rect = event.currentTarget.getBoundingClientRect();
 
-        console.log("rect", rect);
-        console.log("eventX", event.clientX);
-        console.log("eventY", event.clientY);
         // Calculer la position de la souris par rapport à la grille
         const mouseX = event.clientX - rect.left;
-        console.log("mouseX", mouseX);
         const mouseY = event.clientY - rect.top;
-        console.log("mouseY", mouseY);
         // Coordonnées x,y == (0,0) à partir du coin aigu supérieur gauche du tableau
         const cellX = Math.floor(mouseY / cellSize);
         const cellY = Math.floor(mouseX / cellSize);
 
         // Calculer le décalage pour vérifier l'espace entre 2 cellules
         const offsetX = mouseX % cellSize;
-        console.log("offsetX", offsetX);
         const offsetY = mouseY % cellSize;
-        console.log("offsetY", offsetY);
 
         // Condition de vérification de l'écart
         const isInHorizontalGap = offsetY > 0 && offsetY < GAP_CELLULE / 2;
@@ -84,9 +87,7 @@ const WallPlacer: React.FC<WallPlacerProps> = ({ playerId, walls, onPlaceWall })
         // La coordonnée x doit être réduite d'une unité s'il s'agit d'un mur horizontal,
         // la coordonnée y doit être réduite d'une unité s'il s'agit d'un mur vertical.
         const x = cellX - (isInHorizontalGap ? 1 : 0);
-        console.log("x", x);
         const y = cellY - (isInVerticalGap ? 1 : 0);
-        console.log("y", y);
 
         // Vérifiez si le mur est dans les limites de la grille
         // Les murs horizontaux (0<=x<=7, 0<=y<=7)

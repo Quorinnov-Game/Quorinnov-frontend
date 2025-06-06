@@ -3,6 +3,15 @@ import { Player } from "../../@types/player";
 import { BOARD_SIZE } from "./Board";
 import pandas from "../../assets/img/pandas.png";
 
+/**
+ * Composant représentant une case du plateau
+ * @description
+ * Gère l'affichage et l'interaction avec une case:
+ * - Affichage des joueurs
+ * - Mise en évidence des déplacements possibles
+ * - Gestion des clics pour la sélection/déplacement
+ */
+
 type SquareProps = {
     x: number;
     y: number;
@@ -11,7 +20,6 @@ type SquareProps = {
     onSelectPlayer: (player: Player) => void;
     onMovePlayer: (x: number, y: number) => void;
     isValidMove?: boolean;
-    turn: "P1" | "P2";
 };
 
 
@@ -23,7 +31,6 @@ const Square: React.FC<SquareProps> = ({
     onSelectPlayer,
     onMovePlayer,
     isValidMove,
-    turn,
 }) => {
     const playerHere = Object.values(players).find(
         (player) => player.position?.x === x && player.position?.y === y

@@ -59,20 +59,20 @@ const Square: React.FC<SquareProps> = ({
                 backgroundColor: isYourPlayer
                     ? `${playerHere?.color}CC`
                     : isValidMove
-                        ? "rgba(255, 255, 0, 0.3)" // Màu vàng sáng hơn cho các nước đi hợp lệ
+                        ? "rgba(255, 255, 0, 0.3)"
                         : isTopOrBotRow
                             ? "rgba(200, 230, 201, 0.4)"
                             : "rgba(255, 255, 255, 0.1)",
                 cursor: isYourPlayer || isValidMove ? "pointer" : "default",
                 boxShadow: isValidMove && !isYourPlayer
-                    ? "0 0 12px rgba(255, 255, 0, 0.5)" // Tăng độ sáng của glow effect
+                    ? "0 0 12px rgba(255, 255, 0, 0.5)"
                     : "0 0 5px rgba(255, 255, 255, 0.1)",
                 transition: "all 0.3s ease",
                 "&:hover": isYourPlayer || isValidMove
                     ? {
-                        backgroundColor: "rgba(255, 255, 0, 0.5)", // Màu vàng sáng hơn khi hover
+                        backgroundColor: "rgba(255, 255, 0, 0.5)",
                         transform: "translateY(-2px)",
-                        boxShadow: "0 5px 15px rgba(255, 255, 0, 0.6)", // Tăng độ sáng của shadow
+                        boxShadow: "0 5px 15px rgba(255, 255, 0, 0.6)",
                         zIndex: 2,
                     }
                     : {},

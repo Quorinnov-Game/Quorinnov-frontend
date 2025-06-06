@@ -20,7 +20,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ onNewGame, gameId, totalTur
     return (
         <Box display="flex" gap={2} mb={2}>
             <Button variant="contained" color="primary" onClick={onNewGame}>Nouvelle partie</Button>
-            {/* <Button variant="contained" color="success" onClick={onUndo}>Undo</Button> */}
             <TurnHistorySelect 
                 totalTurns={totalTurns}
                 onSelectTurn={onSelectTurn}

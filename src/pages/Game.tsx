@@ -18,7 +18,6 @@ const difficulties = [
     { id: 1, name: "Débutant" },
     { id: 2, name: "Intermédiaire" },
     { id: 3, name: "Avancé" },
-    { id: 4, name: "Master" },
 ];
 
 const Game: React.FC = () => {

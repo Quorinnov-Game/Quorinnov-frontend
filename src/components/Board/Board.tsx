@@ -89,6 +89,8 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
     const [message, setMessage] = useState<MessageState>({ text: null, type: "warning" });
     const [totalTurns, setTotalTurns] = useState(0);
     const [isViewingHistory, setIsViewingHistory] = useState(false);
+
+    // Sauvegarde de l'état actuel du jeu pour le mode historique
     const [currentGameState, setCurrentGameState] = useState<TurnState>({
         players: initialPlayers,
         walls: [],
@@ -189,6 +191,7 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
         return () => clearTimeout(timeout);
     }, [isVsAI, turn, victory, players.P2.id, gameId, aiDifficulty, totalTurns, onTurnUpdate, players, walls, isViewingHistory]);
 
+    // Gestion de la sélection d'un joueur pour le déplacement
     const handleSelectPlayer = (player: Player) => {
         if (isViewingHistory) {
             showMessage("Impossible de jouer en mode historique");
@@ -216,26 +219,26 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
 
     const isPathBlockedByWall = (currentPos: Position, targetPos: Position): boolean => {
         return walls.some(wall => {
-            // Di chuyển theo chiều dọc (x thay đổi, y không đổi)
+        // Déplacer verticalement (x change, y reste constant)
             if (currentPos.y === targetPos.y) {
                 const minX = Math.min(currentPos.x, targetPos.x);
                 if (wall.orientation === HORIZONTAL) {
-                    // Kiểm tra tường ngang
+                    // Vérifier le mur horizontal
                     return (
-                        wall.position.x === minX && // Tường ngang nằm giữa vị trí hiện tại và đích
-                        (wall.position.y === currentPos.y || wall.position.y + 1 === currentPos.y) // Tường có thể bắt đầu tại y hoặc kết thúc tại y+1
+                        wall.position.x === minX && // Mur horizontal entre la position actuelle et la position cible
+                        (wall.position.y === currentPos.y || wall.position.y + 1 === currentPos.y) // Le mur peut commencer à y ou se terminer à y+1
                     );
                 }
             }
 
-            // Di chuyển theo chiều ngang (y thay đổi, x không đổi)
+        // Déplacer horizontalement (y change, x reste constant)
             if (currentPos.x === targetPos.x) {
                 const minY = Math.min(currentPos.y, targetPos.y);
                 if (wall.orientation === VERTICAL) {
-                    // Kiểm tra tường dọc
+                    // Vérifier le mur vertical
                     return (
-                        wall.position.y === minY && // Tường dọc nằm giữa vị trí hiện tại và đích
-                        (wall.position.x === currentPos.x || wall.position.x + 1 === currentPos.x) // Tường có thể bắt đầu tại x hoặc kết thúc tại x+1
+                        wall.position.y === minY && // Mur vertical entre la position actuelle et la position cible
+                        (wall.position.x === currentPos.x || wall.position.x + 1 === currentPos.x) // Le mur peut commencer à x ou se terminer à x+1
                     );
                 }
             }
@@ -267,7 +270,7 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
                 const jumpX = nx + dx;
                 const jumpY = ny + dy;
 
-                // TH1: Có thể nhảy qua thẳng
+                // Cas 1 : Peut sauter directement par-dessus
                 if (
                     jumpX >= 0 && jumpX < BOARD_SIZE &&
                     jumpY >= 0 && jumpY < BOARD_SIZE &&
@@ -276,11 +279,11 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
                 ) {
                     validMoves.push({ x: jumpX, y: jumpY });
                 } else {
-                    // TH2: Không thể nhảy thẳng qua do bị tường, cho phép nhảy chéo
+                    // Cas 2 : Impossible de sauter directement à travers le mur, saut en diagonale autorisé
                     const isVertical = dx !== 0;
                     const sideDirs = isVertical
-                        ? [{ dx: 0, dy: -1 }, { dx: 0, dy: 1 }]  // nếu đối thủ đứng trên/dưới
-                        : [{ dx: -1, dy: 0 }, { dx: 1, dy: 0 }]; // nếu đối thủ đứng trái/phải
+                        ? [{ dx: 0, dy: -1 }, { dx: 0, dy: 1 }]  // si l'adversaire est au-dessus/en dessous
+                        : [{ dx: -1, dy: 0 }, { dx: 1, dy: 0 }]; // si l'adversaire se tient à gauche/droite
 
                     for (const side of sideDirs) {
                         const sideX = nx + side.dx;

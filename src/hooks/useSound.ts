@@ -7,14 +7,14 @@ export const useSound = () => {
     const audioRefs = useRef<{ [K in SoundKey]?: HTMLAudioElement }>({});
 
     useEffect(() => {
-        // Khởi tạo tất cả âm thanh
+        // Initialiser tous les sons
         Object.entries(SOUNDS).forEach(([key, path]) => {
             const audio = new Audio(path);
-            audio.volume = 0.5; // Mặc định volume
+            audio.volume = 0.5; // Volume par défaut
             audioRefs.current[key as SoundKey] = audio;
         });
 
-        // Cleanup khi unmount
+        // Cleanup quand unmount
         return () => {
             Object.values(audioRefs.current).forEach(audio => {
                 if (audio) {
@@ -28,7 +28,7 @@ export const useSound = () => {
     const play = useCallback((soundKey: SoundKey) => {
         const audio = audioRefs.current[soundKey];
         if (audio) {
-            audio.currentTime = 0; // Reset về đầu
+            audio.currentTime = 0; // Reset le son à zéro
             audio.play().catch(err => console.error('Error playing sound:', err));
         }
     }, []);

@@ -12,6 +12,7 @@ import WallFix from './WallFix';
 import AxiosInstance from '../../api/AxiosInstance';
 import { useSound } from '../../hooks/useSound';
 import { SOUND_KEYS } from '../../constants/sound';
+import { useAIMove } from '../../hooks/useAIMove';
 
 export const BOARD_SIZE = 9;
 export const GAP_CELLULE = 10;
@@ -97,11 +98,38 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
         turn: "P1"
     });
 
+    // Référence pour le composant Board
     useImperativeHandle(ref, () => ({
         totalTurns,
         updateBoardHistory,
         resetViewMode,
     }), [totalTurns, currentGameState]);
+
+    const changeTurn = () => {
+        setTurn(prev => prev === "P1" ? "P2" : "P1");
+        setAtion(null);
+    }
+
+    // Hook pour gérer les mouvements de l'IA
+    useAIMove({
+        isVsAI,
+        isViewingHistory,
+        victory,
+        turn,
+        players,
+        gameId,
+        aiDifficulty,
+        onUpdatePlayers: setPlayers,
+        onUpdateWalls: setWalls,
+        onDefeat: () => {
+            setDefeat(true);
+            setPlayers(prev => ({
+                ...prev,
+                P2: { ...prev.P2, isWinner: true }
+            }));
+        },
+        onChangeTurn: changeTurn,
+    });
 
     useEffect(() => {
         if (!isViewingHistory) {
@@ -119,82 +147,18 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
         if (onTurnUpdate) {
             onTurnUpdate(totalTurns);
         }
-
-        const makeAIMove = async () => {
-            if (isViewingHistory || !isVsAI || victory || turn !== "P2") return;
-
-            try {
-                const response = await AxiosInstance.post("/ia_play", {
-                    player_id: players.P2.id,
-                    game_id: gameId,
-                    difficulty: aiDifficulty
-                });
-
-                if (response.data.success) {
-                    const action = response.data.action;
-
-                    if (action === "player") {
-                        setPlayers(prev => ({
-                            ...prev,
-                            P2: {
-                                ...prev.P2,
-                                position: {
-                                    x: response.data.x,
-                                    y: response.data.y
-                                }
-                            }
-                        }));
-
-                        if (response.data.x === BOARD_SIZE - 1) {
-                            setDefeat(true);
-                            setPlayers(prev => ({
-                                ...prev,
-                                P2: { ...prev.P2, isWinner: true }
-                            }));
-                        }
-
-                        play(SOUND_KEYS.MOVE);
-                        changeTurn();
-                    }
-
-                    else if (action === "wall") {
-                        const newWall: Wall = {
-                            playerId: players.P2.id,
-                            position: {
-                                x: response.data.x,
-                                y: response.data.y,
-                            },
-                            orientation: response.data.orientation,
-                        };
-
-                        setWalls(prev => [...prev, newWall]);
-
-                        setPlayers(prev => ({
-                            ...prev,
-                            P2: {
-                                ...prev.P2,
-                                wallsRemaining: prev.P2.wallsRemaining - 1
-                            }
-                        }));
-
-                        play(SOUND_KEYS.PLACE_WALL);
-                        changeTurn();
-                    }
-                }
-            } catch (err) {
-                console.error("AI error:", err);
-                changeTurn();
-            }
-        };
-
-        const timeout = setTimeout(makeAIMove, 800);
-        return () => clearTimeout(timeout);
-    }, [isVsAI, turn, victory, players.P2.id, gameId, aiDifficulty, totalTurns, onTurnUpdate, players, walls, isViewingHistory]);
+        
+    }, [totalTurns, onTurnUpdate, isViewingHistory]);
 
     // Gestion de la sélection d'un joueur pour le déplacement
     const handleSelectPlayer = (player: Player) => {
         if (isViewingHistory) {
             showMessage("Impossible de jouer en mode historique");
+            return;
+        }
+
+        if (isVsAI && players[turn].id === 2) {
+            showMessage("L'IA est en train de réfléchir, veuillez patienter");
             return;
         }
 
@@ -353,6 +317,11 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
             return;
         }
 
+        if (isVsAI && players[turn].id === 2) {
+            showMessage("L'IA est en train de réfléchir, veuillez patienter");
+            return;
+        }
+
         if (action === ACTION_MOVE) {
             showMessage("Vous êtes en train de déplacer, impossible de placer un mur");
             return;
@@ -477,11 +446,6 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
 
     const handleCancelWall = () => {
         setTemporaryWall(null);
-        setAtion(null);
-    }
-
-    const changeTurn = () => {
-        setTurn(prev => prev === "P1" ? "P2" : "P1");
         setAtion(null);
     }
 

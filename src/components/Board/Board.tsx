@@ -108,6 +108,7 @@ const Board = React.forwardRef<BoardRef, BoardProps>(({ playerColor, gameId, isV
     const changeTurn = () => {
         setTurn(prev => prev === "P1" ? "P2" : "P1");
         setAtion(null);
+        showMessage(`Transférer de tour à ${players[turn === "P1" ? "P2" : "P1"].name}`);
     }
 
     // Hook pour gérer les mouvements de l'IA

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import Board, { BOARD_SIZE, BoardRef } from '../components/Board/Board';
 import { useNavigate } from 'react-router';
 import { Box } from '@mui/material';
@@ -8,7 +8,7 @@ import ChooseDifficultyGameForAI from '../components/Notify/ChooseDifficultyGame
 import ChoosePlayerColorGame from '../components/Notify/ChoosePlayerColorGame';
 import ChooseRestartNewGame from '../components/Notify/ChooseNewGame';
 import AxiosInstance from '../api/AxiosInstance';
-import { HistoryResponse, TurnHistory } from '../@types/game';
+import { HistoryResponse } from '../@types/game';
 
 export const COLOR_P1 = "#f8bbd0";
 export const COLOR_P2 = "#77B5FE";
@@ -20,6 +20,10 @@ const difficulties = [
     { id: 3, name: "Avancé" },
 ];
 
+/**
+ * Composant principal du jeu
+ * Gère la logique globale et l'état du jeu
+ */
 const Game: React.FC = () => {
     const navigate = useNavigate();
     const [openNewGame, setOpenNewGame] = useState(false);

@@ -26,6 +26,14 @@ const TurnHistorySelect: React.FC<TurnHistorySelectProps> = ({ totalTurns, onSel
                     color: "black",
                     backgroundColor: "lightgoldenrodyellow",
                 }}
+                MenuProps={{
+                    PaperProps: {
+                        style: {
+                            maxHeight: 200,
+                            overflow: 'auto'
+                        }
+                    },
+                }}
             >
                 {[...Array(totalTurns + 1)].map((_, index) => (
                     <MenuItem 
